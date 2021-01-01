@@ -1,5 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+
+#include "enigneinterface.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,14 +12,18 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
+    QQmlApplicationEngine appEngine;
+
+    EnigneInterface* gameBackend = new EnigneInterface(&appEngine);
+    appEngine.rootContext()->setContextProperty("Engine", gameBackend);
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+    QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
-    engine.load(url);
+    appEngine.load(url);
 
     return app.exec();
 }

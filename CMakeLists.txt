@@ -30,10 +30,10 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick LinguistTools REQUIRED)
 set(TS_FILES voyelles-pendues_fr_FR.ts)
 
 set(PROJECT_SOURCES
-        main.cpp
+        src/main.cpp
+        src/engine.cpp
+        src/enigneinterface.cpp
         qml.qrc
-        engine.cpp
-        enigneinterface.cpp
         ${TS_FILES}
 )
 

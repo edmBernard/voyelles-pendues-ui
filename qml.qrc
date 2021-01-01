@@ -1,10 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-    </qresource>
-    <qresource prefix="/data/">
-        <file>scripts/valid_word_without_consonants.txt</file>
-        <file>scripts/valid_word_without_vowels.txt</file>
-        <file>scripts/valid_word.txt</file>
+        <file>qml/main.qml</file>
+        <file>data/valid_word.txt</file>
     </qresource>
 </RCC>

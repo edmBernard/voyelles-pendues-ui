@@ -17,7 +17,7 @@ public:
 
 signals:
 
-slots:
+public slots:
 
 private:
     std::unique_ptr<Engine> m_engine;

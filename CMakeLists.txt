@@ -11,6 +11,16 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(spdlog CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(utf8cpp CONFIG REQUIRED)
+
+include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/engine)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
+
+
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check https://doc.qt.io/qt/deployment-android.html for more information.
 # They need to be set before the find_package(...) calls below.
@@ -31,7 +41,6 @@ set(TS_FILES voyelles-pendues_fr_FR.ts)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/engine.cpp
         src/enigneinterface.cpp
         qml.qrc
         ${TS_FILES}
@@ -60,4 +69,4 @@ endif()
 target_compile_definitions(voyelles-pendues
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(voyelles-pendues
-  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick spdlog::spdlog fmt::fmt utf8cpp vowels-engine)

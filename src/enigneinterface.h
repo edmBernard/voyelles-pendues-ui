@@ -20,7 +20,7 @@ signals:
 public slots:
 
 private:
-    std::unique_ptr<Engine> m_engine;
+    std::unique_ptr<vowels::Engine> m_engine;
 };
 
 #endif // ENIGNEINTERFACE_H

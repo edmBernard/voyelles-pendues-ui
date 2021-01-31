@@ -32,7 +32,7 @@ Item {
             id: titleLabel
             text: qsTr("Voyelles Pendues")
             anchors.fill: parent
-            font.pixelSize: 12
+            font.pixelSize: 24
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -58,17 +58,25 @@ Item {
         }
         Rectangle {
             id: wordCounterContainer
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.left: newPuzzleButton.right
-            anchors.right: scoreLabel.left
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             Text {
                 id: wordIndexLabel
                 text: gameBackend.getIndex()
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                font.pixelSize: 12
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text {
+                id: wordSeparatorLabel
+                text: "/"
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: wordIndexLabel.right
+                font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -77,8 +85,8 @@ Item {
                 text: gameBackend.getTotalRemaining()
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                font.pixelSize: 12
+                anchors.left: wordSeparatorLabel.right
+                font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -89,7 +97,7 @@ Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            font.pixelSize: 12
+            font.pixelSize: 24
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -125,7 +133,7 @@ Item {
             id: wildCardLabel
             text: gameBackend.getWord()
             anchors.fill: parent
-            font.pixelSize: 12
+            font.pixelSize: 24
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -133,29 +141,32 @@ Item {
 
     Rectangle {
         id: gridContainer
-        height: parent.height / 4
-        color: "#ff00ff"
+        color: "#ffffff"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: wildCard.bottom
         anchors.bottom: footerContainer.top
-        anchors.leftMargin: 0
 
         GridView {
             id: grid
-            anchors.fill: parent
-            cellWidth: 100; cellHeight: 100
+            width: 300
+            height: 300
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            cellWidth: 60; cellHeight: 60
             focus: true
             model: gameBackend.getGrid()
 
-            highlight: Rectangle { width: 80; height: 80; color: "lightsteelblue" }
-
             delegate: Item {
-                width: 100; height: 100
+                width: 60; height: 60
 
                 Text {
-                    anchors { horizontalCenter: parent.horizontalCenter }
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
                     text: modelData
+                    font.capitalization: Font.AllUppercase
+                    font.pixelSize: 24
+                    font.bold: true
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -167,8 +178,8 @@ Item {
 
     Rectangle {
         id: footerContainer
-        height: parent.height / 16
-        color: "#00ffff"
+        height: 16
+        color: "#ffffff"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -179,7 +190,6 @@ Item {
             text: qsTr("Erwan Bernard")
             anchors.fill: parent
             font.pixelSize: 12
-            horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             minimumPointSize: 8
             minimumPixelSize: 8

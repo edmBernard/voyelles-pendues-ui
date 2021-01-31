@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "enigneinterface.h"
+#include "engineinterface.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine appEngine;
 
-    EnigneInterface* gameBackend = new EnigneInterface(&appEngine);
-    appEngine.rootContext()->setContextProperty("Engine", gameBackend);
+    EngineInterface gameBackend;
+    appEngine.rootContext()->setContextProperty("gameBackend", &gameBackend);
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,

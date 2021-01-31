@@ -5,9 +5,9 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "enigneinterface.h"
+#include "engineinterface.h"
 
-EnigneInterface::EnigneInterface(QObject *parent) : QObject(parent)
+EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
 {
 
     QFile dictFile(":/datas/valid_word.txt");
@@ -17,7 +17,7 @@ EnigneInterface::EnigneInterface(QObject *parent) : QObject(parent)
     QTextStream in(&dictFile);
 
     std::vector<std::string> wordList;
-    int count = 0;
+
     while(!in.atEnd()) {
         QString line = in.readLine();
         wordList.push_back(line.toUtf8().constData());
@@ -26,4 +26,5 @@ EnigneInterface::EnigneInterface(QObject *parent) : QObject(parent)
     dictFile.close();
 
     m_engine = std::make_unique<vowels::Engine>(5, wordList);
+    m_numberWords = m_engine->getWordsToFindLength();
 };

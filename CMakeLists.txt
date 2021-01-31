@@ -41,7 +41,7 @@ set(TS_FILES voyelles-pendues_fr_FR.ts)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/enigneinterface.cpp
+        src/engineinterface.cpp
         qml.qrc
         ${TS_FILES}
 )

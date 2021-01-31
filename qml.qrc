@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
+        <file>qml/GamePage.qml</file>
         <file>datas/valid_word.txt</file>
     </qresource>
 </RCC>

@@ -6,7 +6,7 @@ Item {
     Connections {
         target: gameBackend
         function onUpdateScore(score) {
-            scoreLabel.text = score;
+            scoreValue.text = score;
         }
         function onUpdateWord() {
             wildCardLabel.text = gameBackend.getWord();
@@ -33,6 +33,7 @@ Item {
             text: qsTr("Voyelles Pendues")
             anchors.fill: parent
             font.pixelSize: 24
+            font.capitalization: "AllUppercase"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -41,7 +42,7 @@ Item {
     Rectangle {
         id: headerContainer
         height: parent.height / 16
-        color: "#ffff00"
+        color: "#ffffff"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: titleContainer.bottom
@@ -91,17 +92,33 @@ Item {
                 verticalAlignment: Text.AlignVCenter
             }
         }
-        Text {
-            id: scoreLabel
-            text: "0"
+        Rectangle {
+            id: scoreContainer
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
 
+            Text {
+                id: scoreLabel
+                text: "Score: "
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text {
+                id: scoreValue
+                text: "0"
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
     }
 
     Rectangle {
@@ -155,22 +172,32 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             cellWidth: 60; cellHeight: 60
             focus: true
+            interactive: false
             model: gameBackend.getGrid()
 
             delegate: Item {
                 width: 60; height: 60
-
                 Text {
+                    id: gridLabel
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    text: modelData
+                    text: letter
                     font.capitalization: Font.AllUppercase
                     font.pixelSize: 24
-                    font.bold: true
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: parent.GridView.view.currentIndex = index
+                    font.bold: selected == "1"
+
+                    MultiPointTouchArea {
+                        anchors.fill: parent
+                        mouseEnabled: true
+                        maximumTouchPoints: 1
+                        onUpdated: function(touchPoints) {
+                            let selectedIndex= grid.indexAt(touchPoints[0].x, touchPoints[0].y);
+                            gameBackend.addLetter(selectedIndex);
+                        }
+                        onReleased: {
+                            gameBackend.cleanLetter();
+                        }
+                    }
                 }
             }
         }

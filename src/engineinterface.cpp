@@ -35,7 +35,7 @@ EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
       QStandardItem* it = new QStandardItem();
       it->setData(QString("%0").arg(grid[i]), GridModel::role1);
       it->setData(QString("%0").arg(bloom[i]), GridModel::role2);
-      it->setData(QString("%0").arg(i % 2 == 0), GridModel::role3);
+      it->setData(QString("%0").arg(0), GridModel::role3);
       m_model.appendRow(it);
     }
 };

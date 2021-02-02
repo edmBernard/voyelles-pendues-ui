@@ -184,20 +184,22 @@ Item {
                     text: letter
                     font.capitalization: Font.AllUppercase
                     font.pixelSize: 24
+                    color: bloom == "0" ? "#aaaaaa" : "#000000"
                     font.bold: selected == "1"
 
-                    MultiPointTouchArea {
-                        anchors.fill: parent
-                        mouseEnabled: true
-                        maximumTouchPoints: 1
-                        onUpdated: function(touchPoints) {
-                            let selectedIndex= grid.indexAt(touchPoints[0].x, touchPoints[0].y);
-                            gameBackend.addLetter(selectedIndex);
-                        }
-                        onReleased: {
-                            gameBackend.cleanLetter();
-                        }
-                    }
+
+                }
+            }
+            MultiPointTouchArea {
+                anchors.fill: parent
+                mouseEnabled: true
+                maximumTouchPoints: 1
+                onUpdated: function(touchPoints) {
+                    let selectedIndex= grid.indexAt(touchPoints[0].x, touchPoints[0].y);
+                    gameBackend.addLetter(selectedIndex);
+                }
+                onReleased: {
+                    gameBackend.cleanLetter();
                 }
             }
         }

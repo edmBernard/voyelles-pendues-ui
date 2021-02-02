@@ -78,10 +78,16 @@ public:
     emit updateWord();
   }
   Q_INVOKABLE void addLetter(uint64_t index) {
-    std::cout << index << std::endl;
+    if (index >= 0 && index <= m_engine->getGridSize() * m_engine->getGridSize()) {
+      auto item = m_model.item(index);
+      item->setData(QString("%0").arg(1), GridModel::role3);
+    }
   }
   Q_INVOKABLE void cleanLetter() {
-    std::cout << "clean Letter" << std::endl;
+    for (uint64_t i = 0; i < m_engine->getGridSize() * m_engine->getGridSize(); ++i) {
+      auto item = m_model.item(i);
+      item->setData(QString("%0").arg(0), GridModel::role3);
+    }
   }
 signals:
   void updateWord();

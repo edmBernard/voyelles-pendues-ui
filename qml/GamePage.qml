@@ -9,7 +9,6 @@ Item {
             scoreValue.text = score;
         }
         function onUpdateWord() {
-            wildCardLabel.text = gameBackend.getWord();
             wordIndexLabel.text = gameBackend.getIndex() + 1;
             wordRemainingLabel.text = gameBackend.getTotalRemaining();
         }
@@ -146,14 +145,37 @@ Item {
             anchors.right: parent.right
             onClicked: gameBackend.nextWord()
         }
-        Text {
-            id: wildCardLabel
-            text: gameBackend.getWord()
-            anchors.fill: parent
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+        Rectangle {
+            id: wildCardContainer
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left: wildCardButtonPrevious.right
+            anchors.right: wildCardButtonNext.left
+
+            ListView {
+                id: wildCardView
+                width: contentWidth
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                orientation: ListView.Horizontal
+                interactive: false
+
+                model: gameBackend.getWord()
+
+                delegate: Item {
+                    width: 20
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: empty == "0" ? letter : "_"
+                        font.pixelSize: 24
+                        font.bold: empty == "1"
+                    }
+                }
+            }
         }
+
+
     }
 
     Rectangle {

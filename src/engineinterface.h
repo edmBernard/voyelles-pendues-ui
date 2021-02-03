@@ -94,14 +94,14 @@ public:
     } else {
       --m_currentWordIndex;
     }
-    updateWildcardModel();
+    resetWildcardModel();
   }
   Q_INVOKABLE void nextWord() {
     ++m_currentWordIndex;
     if (m_currentWordIndex >= m_numberWords) {
       m_currentWordIndex = 0;
     }
-    updateWildcardModel();
+    resetWildcardModel();
   }
   Q_INVOKABLE void addLetter(uint64_t index) {
     if (index >= 0 && index < m_engine->getGridSize() * m_engine->getGridSize()) {
@@ -116,12 +116,13 @@ public:
       auto item = m_gridModel.item(i);
       item->setData(QString("%0").arg(0), GridModel::role3);
     }
-    updateWildcardModel();
+    search();
+    resetWildcardModel();
   }
 
   Q_INVOKABLE void generateNewPuzzle() {
     m_engine->generateNewPuzzle();
-    updateWildcardModel();
+    resetWildcardModel();
     emit updateGrid();
   }
 
@@ -141,7 +142,7 @@ public:
     case vowels::SearchReturnCode::kWordInList:
       ++m_playerScore;
       --m_numberWords;
-      updateWildcardModel();
+      resetWildcardModel();
       emit updateScore(m_playerScore);
       break;
     case vowels::SearchReturnCode::kWordExist:
@@ -150,10 +151,10 @@ public:
     default:
       emit notify("Ce mot n'exist pas");
     }
-    updateWildcardModel();
+    resetWildcardModel();
   }
 
-  Q_INVOKABLE void updateWildcardModel() {
+  Q_INVOKABLE void resetWildcardModel() {
     const std::string wildcard = m_engine->getWord(m_currentWordIndex).wildCard;
     const QString word(wildcard.data());
     m_wildcardModel.clear();

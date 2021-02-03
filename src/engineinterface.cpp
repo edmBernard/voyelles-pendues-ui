@@ -37,5 +37,5 @@ EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
       m_gridModel.appendRow(it);
     }
 
-    updateWildcardModel();
+    resetWildcardModel();
 };

@@ -123,15 +123,15 @@ public:
   }
 
   Q_INVOKABLE void generateNewPuzzle() {
-    if (m_numberWords != 0) {
+    if (m_numberWords == m_foundWord) {
       incrScore(kScoreOnReset); // when the player manually reset
     }
-    m_engine->generateNewPuzzle();
-    resetGridModel();
-    resetWildcardModel();
-    m_numberWords = m_engine->getWordsToFindLength();
     m_foundWord = 0;
     m_currentWordIndex = 0;
+    m_engine->generateNewPuzzle();
+    m_numberWords = m_engine->getWordsToFindLength();
+    resetGridModel();
+    resetWildcardModel();
     emit updateMeta();
   }
 

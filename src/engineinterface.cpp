@@ -24,7 +24,7 @@ EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
 
     dictFile.close();
 
-    m_engine = std::make_unique<vowels::Engine>(5, wordList);
+    m_engine = std::make_unique<vowels::Engine>(m_gridSize, wordList);
     m_numberWords = m_engine->getWordsToFindLength();
 
     resetGridModel();

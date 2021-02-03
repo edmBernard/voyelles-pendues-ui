@@ -185,8 +185,8 @@ Item {
 
         GridView {
             id: grid
-            width: 300
-            height: 300
+            width: 60 * gameBackend.getGridSize()
+            height: 60 * gameBackend.getGridSize()
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             cellWidth: 60; cellHeight: 60

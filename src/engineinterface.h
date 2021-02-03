@@ -13,6 +13,10 @@
 
 #include <QStandardItemModel>
 
+constexpr int kScoreOnValid = 10;
+constexpr int kScoreOnInvalid = 0;
+constexpr int kScoreOnReset = -50;
+
 class GridModel : public QStandardItemModel
 {
 
@@ -82,6 +86,11 @@ public:
   Q_INVOKABLE WildcardModel *getWord() {
     return &m_wildcardModel;
   }
+
+  Q_INVOKABLE int getGridSize() {
+    return m_gridSize;
+  }
+
   Q_INVOKABLE uint64_t getIndex() {
     return m_currentWordIndex;
   }
@@ -89,18 +98,11 @@ public:
     return m_numberWords;
   }
   Q_INVOKABLE void previousWord() {
-    if (m_currentWordIndex == 0) {
-      m_currentWordIndex = m_numberWords - 1;
-    } else {
-      --m_currentWordIndex;
-    }
+    incrIndex(-1);
     resetWildcardModel();
   }
   Q_INVOKABLE void nextWord() {
-    ++m_currentWordIndex;
-    if (m_currentWordIndex >= m_numberWords) {
-      m_currentWordIndex = 0;
-    }
+    incrIndex(1);
     resetWildcardModel();
   }
   Q_INVOKABLE void addLetter(uint64_t index) {
@@ -121,9 +123,13 @@ public:
   }
 
   Q_INVOKABLE void generateNewPuzzle() {
+    if (m_numberWords != 0) {
+      incrScore(kScoreOnReset); // when the player manually reset
+    }
     m_engine->generateNewPuzzle();
     resetGridModel();
     resetWildcardModel();
+    m_numberWords = m_engine->getWordsToFindLength();
     emit updateMeta();
   }
 
@@ -140,16 +146,21 @@ public:
     auto result = m_engine->search(word.toUtf8().constData());
     switch (result) {
     case vowels::SearchReturnCode::kWordInList:
-      ++m_playerScore;
+      incrScore(kScoreOnValid);
       --m_numberWords;
-      --m_currentWordIndex;
-      emit updateScore(m_playerScore);
-      emit resetGridModel(); // to update bloom filter
+      incrIndex(-1);
+      if (m_numberWords == 0) {
+        generateNewPuzzle();
+        return;
+      }
+      resetGridModel(); // to update bloom filter
       break;
     case vowels::SearchReturnCode::kWordExist:
+      incrScore(kScoreOnValid);
       emit notify("Ce mot exist mais ce n'est pas celui qu'on cherche");
       break;
     default:
+      incrScore(kScoreOnInvalid);
       emit notify("Ce mot n'exist pas");
     }
   }
@@ -216,12 +227,32 @@ signals:
 public slots:
 
 private:
-  uint64_t m_currentWordIndex = 0;
+  void incrScore(int value) {
+    m_playerScore += value;
+    if (m_playerScore < 0) {
+      m_playerScore = 0;
+    }
+    emit updateScore(m_playerScore);
+  }
+
+  void incrIndex(int value) {
+    m_currentWordIndex += value;
+    if (m_currentWordIndex < 0) {
+        m_currentWordIndex = m_numberWords - 1;
+        return;
+    }
+    if (m_currentWordIndex >= m_numberWords) {
+        m_currentWordIndex = 0;
+        return;
+    }
+  }
+  int64_t m_currentWordIndex = 0;
   uint64_t m_numberWords = 0;
   std::vector<uint64_t> m_pressedIndex;
 
   std::unique_ptr<vowels::Engine> m_engine;
-  uint64_t m_playerScore = 0;
+  uint64_t m_gridSize = 3;
+  int64_t m_playerScore = 0;
   GridModel m_gridModel;
   WildcardModel m_wildcardModel;
 };

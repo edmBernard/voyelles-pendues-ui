@@ -9,8 +9,8 @@ Item {
             scoreValue.text = score;
         }
         function onUpdateMeta() {
-            wordIndexLabel.text = gameBackend.getIndex() + 1;
-            wordRemainingLabel.text = gameBackend.getTotalRemaining();
+            wordFoundLabel.text = gameBackend.getFound();
+            wordTotalLabel.text = gameBackend.getTotal();
         }
     }
 
@@ -58,7 +58,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             Text {
-                id: wordIndexLabel
+                id: wordFoundLabel
                 text: gameBackend.getIndex()
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
@@ -72,14 +72,14 @@ Item {
                 text: "/"
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                anchors.left: wordIndexLabel.right
+                anchors.left: wordFoundLabel.right
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
             Text {
-                id: wordRemainingLabel
-                text: gameBackend.getTotalRemaining()
+                id: wordTotalLabel
+                text: gameBackend.getTotal()
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: wordSeparatorLabel.right

@@ -91,10 +91,10 @@ public:
     return m_gridSize;
   }
 
-  Q_INVOKABLE uint64_t getIndex() {
-    return m_currentWordIndex;
+  Q_INVOKABLE uint64_t getFound() {
+    return m_foundWord;
   }
-  Q_INVOKABLE uint64_t getTotalRemaining() {
+  Q_INVOKABLE int64_t getTotal() {
     return m_numberWords;
   }
   Q_INVOKABLE void previousWord() {
@@ -130,6 +130,8 @@ public:
     resetGridModel();
     resetWildcardModel();
     m_numberWords = m_engine->getWordsToFindLength();
+    m_foundWord = 0;
+    m_currentWordIndex = 0;
     emit updateMeta();
   }
 
@@ -147,11 +149,11 @@ public:
     switch (result) {
     case vowels::SearchReturnCode::kWordInList:
       incrScore(kScoreOnValid);
-      --m_numberWords;
-      if (m_currentWordIndex > 0) {
+      ++m_foundWord;
+      if (m_currentWordIndex >= m_numberWords - m_foundWord) {
         incrIndex(-1);
       }
-      if (m_numberWords == 0) {
+      if (m_numberWords - m_foundWord <= 0) {
         generateNewPuzzle();
         return;
       }
@@ -240,16 +242,17 @@ private:
   void incrIndex(int value) {
     m_currentWordIndex += value;
     if (m_currentWordIndex < 0) {
-        m_currentWordIndex = m_numberWords - 1;
+        m_currentWordIndex = m_numberWords - m_foundWord - 1;
         return;
     }
-    if (m_currentWordIndex >= m_numberWords) {
+    if (m_currentWordIndex >= m_numberWords - m_foundWord) {
         m_currentWordIndex = 0;
         return;
     }
   }
   int64_t m_currentWordIndex = 0;
-  uint64_t m_numberWords = 0;
+  int64_t m_foundWord = 0;
+  int64_t m_numberWords = 0;
   std::vector<uint64_t> m_pressedIndex;
 
   std::unique_ptr<vowels::Engine> m_engine;

@@ -122,8 +122,9 @@ public:
 
   Q_INVOKABLE void generateNewPuzzle() {
     m_engine->generateNewPuzzle();
+    resetGridModel();
     resetWildcardModel();
-    emit updateGrid();
+    emit updateMeta();
   }
 
   void search() {
@@ -141,13 +142,28 @@ public:
     case vowels::SearchReturnCode::kWordInList:
       ++m_playerScore;
       --m_numberWords;
+      --m_currentWordIndex;
       emit updateScore(m_playerScore);
+      emit resetGridModel(); // to update bloom filter
       break;
     case vowels::SearchReturnCode::kWordExist:
       emit notify("Ce mot exist mais ce n'est pas celui qu'on cherche");
       break;
     default:
       emit notify("Ce mot n'exist pas");
+    }
+  }
+
+  Q_INVOKABLE void resetGridModel() {
+    const auto grid = m_engine->getGrid();
+    const auto bloom = m_engine->getBloom();
+    m_gridModel.clear();
+    for (uint64_t i = 0; i < grid.size(); ++i) {
+      QStandardItem* it = new QStandardItem();
+      it->setData(QString("%0").arg(grid[i]), GridModel::role1);
+      it->setData(QString("%0").arg(bloom[i]), GridModel::role2);
+      it->setData(QString("%0").arg(0), GridModel::role3);
+      m_gridModel.appendRow(it);
     }
   }
 
@@ -192,8 +208,6 @@ public:
 
 signals:
   void updateMeta();
-
-  void updateGrid();
 
   void updateScore(uint64_t score);
 

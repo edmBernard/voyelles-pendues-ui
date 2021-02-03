@@ -27,15 +27,6 @@ EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
     m_engine = std::make_unique<vowels::Engine>(5, wordList);
     m_numberWords = m_engine->getWordsToFindLength();
 
-    const auto grid = m_engine->getGrid();
-    const auto bloom = m_engine->getBloom();
-    for (uint64_t i = 0; i < grid.size(); ++i) {
-      QStandardItem* it = new QStandardItem();
-      it->setData(QString("%0").arg(grid[i]), GridModel::role1);
-      it->setData(QString("%0").arg(bloom[i]), GridModel::role2);
-      it->setData(QString("%0").arg(0), GridModel::role3);
-      m_gridModel.appendRow(it);
-    }
-
+    resetGridModel();
     resetWildcardModel();
 };

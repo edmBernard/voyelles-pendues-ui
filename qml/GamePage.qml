@@ -8,7 +8,7 @@ Item {
         function onUpdateScore(score) {
             scoreValue.text = score;
         }
-        function onUpdateWord() {
+        function onUpdateMeta() {
             wordIndexLabel.text = gameBackend.getIndex() + 1;
             wordRemainingLabel.text = gameBackend.getTotalRemaining();
         }

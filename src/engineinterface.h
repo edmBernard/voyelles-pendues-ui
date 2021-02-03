@@ -125,7 +125,17 @@ public:
     emit updateGrid();
   }
 
-  Q_INVOKABLE void search(QString word) {
+  void search() {
+    // Search was trigger when we release touch screen
+    // create word from wildcard model
+    for (auto it = word.begin(); it != word.end(); ++it) {
+      QStandardItem* standardItem = new QStandardItem();
+      standardItem->setData(QString("%0").arg(*it), WildcardModel::role1);
+      standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::role2);
+      m_wildcardModel.appendRow(standardItem);
+    }
+
+    // search word in engine list
     auto result = m_engine->search(word.toUtf8().constData());
     switch (result) {
     case vowels::SearchReturnCode::kWordInList:
@@ -155,7 +165,7 @@ public:
       m_wildcardModel.appendRow(standardItem);
     }
 
-    emit updateWord();
+    emit updateMeta();
   }
 
   Q_INVOKABLE bool fillWildcard(uint64_t index) {
@@ -183,7 +193,7 @@ public:
 
 
 signals:
-  void updateWord();
+  void updateMeta();
 
   void updateGrid();
 

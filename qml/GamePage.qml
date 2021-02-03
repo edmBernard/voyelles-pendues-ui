@@ -12,9 +12,6 @@ Item {
             wordIndexLabel.text = gameBackend.getIndex() + 1;
             wordRemainingLabel.text = gameBackend.getTotalRemaining();
         }
-        function onUpdateGrid() {
-            grid.model = gameBackend.getGrid();
-        }
     }
 
     Rectangle {

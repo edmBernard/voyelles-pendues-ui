@@ -9,7 +9,6 @@
 
 EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
 {
-
     QFile dictFile(":/datas/valid_word.txt");
     if(!dictFile.open(QIODevice::ReadOnly)) {
         throw std::runtime_error("Can't open dictionnary file");
@@ -27,7 +26,6 @@ EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
 
     m_engine = std::make_unique<vowels::Engine>(5, wordList);
     m_numberWords = m_engine->getWordsToFindLength();
-
 
     const auto grid = m_engine->getGrid();
     const auto bloom = m_engine->getBloom();

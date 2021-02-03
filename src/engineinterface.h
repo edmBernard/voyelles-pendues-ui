@@ -104,9 +104,11 @@ public:
     updateWildcardModel();
   }
   Q_INVOKABLE void addLetter(uint64_t index) {
-    if (index >= 0 && index <= m_engine->getGridSize() * m_engine->getGridSize()) {
+    if (index >= 0 && index < m_engine->getGridSize() * m_engine->getGridSize()) {
       auto item = m_gridModel.item(index);
       item->setData(QString("%0").arg(1), GridModel::role3);
+
+      fillWildcard(index);
     }
   }
   Q_INVOKABLE void cleanLetter() {
@@ -114,24 +116,16 @@ public:
       auto item = m_gridModel.item(i);
       item->setData(QString("%0").arg(0), GridModel::role3);
     }
+    updateWildcardModel();
   }
-signals:
-  void updateWord();
 
-  void updateGrid();
-
-  void updateScore(uint64_t score);
-
-  void notify(QString message);
-
-public slots:
-  void generateNewPuzzle() {
+  Q_INVOKABLE void generateNewPuzzle() {
     m_engine->generateNewPuzzle();
     updateWildcardModel();
     emit updateGrid();
   }
 
-  void search(QString word) {
+  Q_INVOKABLE void search(QString word) {
     auto result = m_engine->search(word.toUtf8().constData());
     switch (result) {
     case vowels::SearchReturnCode::kWordInList:
@@ -149,22 +143,60 @@ public slots:
     updateWildcardModel();
   }
 
-  void updateWildcardModel() {
+  Q_INVOKABLE void updateWildcardModel() {
     const std::string wildcard = m_engine->getWord(m_currentWordIndex).wildCard;
     const QString word(wildcard.data());
     m_wildcardModel.clear();
+    m_pressedIndex.clear();
     for (auto it = word.begin(); it != word.end(); ++it) {
       QStandardItem* standardItem = new QStandardItem();
       standardItem->setData(QString("%0").arg(*it), WildcardModel::role1);
       standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::role2);
       m_wildcardModel.appendRow(standardItem);
     }
+
     emit updateWord();
   }
+
+  Q_INVOKABLE void fillWildcard(uint64_t index) {
+    if (index >= m_engine->getGrid().size()) {
+      return;
+    }
+    if (m_pressedIndex.size() != 0) {
+      // Check if index already pressed
+      auto found = std::find(m_pressedIndex.begin(), m_pressedIndex.end(), index);
+      if (found != m_pressedIndex.end()) {
+        return;
+      }
+    }
+    m_pressedIndex.push_back(index);
+    for (int i = 0; i < m_wildcardModel.rowCount(); ++i) {
+      auto standardItem = m_wildcardModel.item(i);
+      if (standardItem->data(WildcardModel::role2) == "1") {
+        standardItem->setData("0", WildcardModel::role2);
+        standardItem->setData(QString("%0").arg(m_engine->getGrid()[index]), WildcardModel::role1);
+        return;
+      }
+    }
+  }
+
+
+signals:
+  void updateWord();
+
+  void updateGrid();
+
+  void updateScore(uint64_t score);
+
+  void notify(QString message);
+
+public slots:
 
 private:
   uint64_t m_currentWordIndex = 0;
   uint64_t m_numberWords = 0;
+  std::vector<uint64_t> m_pressedIndex;
+
   std::unique_ptr<vowels::Engine> m_engine;
   uint64_t m_playerScore = 0;
   GridModel m_gridModel;

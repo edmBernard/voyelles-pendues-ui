@@ -129,11 +129,10 @@ public:
   void search() {
     // Search was trigger when we release touch screen
     // create word from wildcard model
-    for (auto it = word.begin(); it != word.end(); ++it) {
-      QStandardItem* standardItem = new QStandardItem();
-      standardItem->setData(QString("%0").arg(*it), WildcardModel::role1);
-      standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::role2);
-      m_wildcardModel.appendRow(standardItem);
+    QString word;
+    for (int i = 0; i < m_wildcardModel.rowCount(); ++i) {
+      auto standardItem = m_wildcardModel.item(i);
+      word.append(standardItem->data(WildcardModel::role1).toString());
     }
 
     // search word in engine list
@@ -142,7 +141,6 @@ public:
     case vowels::SearchReturnCode::kWordInList:
       ++m_playerScore;
       --m_numberWords;
-      resetWildcardModel();
       emit updateScore(m_playerScore);
       break;
     case vowels::SearchReturnCode::kWordExist:
@@ -151,7 +149,6 @@ public:
     default:
       emit notify("Ce mot n'exist pas");
     }
-    resetWildcardModel();
   }
 
   Q_INVOKABLE void resetWildcardModel() {

@@ -148,7 +148,9 @@ public:
     case vowels::SearchReturnCode::kWordInList:
       incrScore(kScoreOnValid);
       --m_numberWords;
-      incrIndex(-1);
+      if (m_currentWordIndex > 0) {
+        incrIndex(-1);
+      }
       if (m_numberWords == 0) {
         generateNewPuzzle();
         return;

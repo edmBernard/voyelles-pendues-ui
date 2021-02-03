@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(spdlog CONFIG REQUIRED)
@@ -25,17 +25,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
 # Check https://doc.qt.io/qt/deployment-android.html for more information.
 # They need to be set before the find_package(...) calls below.
 
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
+if(ANDROID)
+    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    if (ANDROID_ABI STREQUAL "armeabi-v7a")
+        set(ANDROID_EXTRA_LIBS
+            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
+            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
+    endif()
+endif()
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick LinguistTools REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick Linguist REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick Linguist REQUIRED)
 
 set(TS_FILES voyelles-pendues_fr_FR.ts)
 

@@ -7,7 +7,9 @@
 
 #include "engineinterface.h"
 
-EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
+EngineInterface::EngineInterface(uint64_t gridSize, QObject *parent)
+  : QObject(parent)
+  , m_gridSize(gridSize)
 {
     QFile dictFile(":/datas/valid_words.txt");
     if(!dictFile.open(QIODevice::ReadOnly)) {

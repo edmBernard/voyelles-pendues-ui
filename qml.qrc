@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>qml/main.qml</file>
         <file>qml/GamePage.qml</file>
-        <file>datas/valid_word.txt</file>
+        <file>datas/valid_words.txt</file>
         <file>datas/font/B612Mono-Bold.ttf</file>
         <file>datas/font/B612Mono-Regular.ttf</file>
     </qresource>

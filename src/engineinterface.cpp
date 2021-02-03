@@ -9,7 +9,7 @@
 
 EngineInterface::EngineInterface(QObject *parent) : QObject(parent)
 {
-    QFile dictFile(":/datas/valid_word.txt");
+    QFile dictFile(":/datas/valid_words.txt");
     if(!dictFile.open(QIODevice::ReadOnly)) {
         throw std::runtime_error("Can't open dictionnary file");
     }

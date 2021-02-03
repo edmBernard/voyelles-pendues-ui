@@ -47,32 +47,44 @@ Item {
 
         Button {
             id: newPuzzleButton
-            text: qsTr("New")
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             onPressed: gameBackend.generateNewPuzzle()
+
+            contentItem: Text {
+                text: qsTr("New")
+                color: "#aaaaaa"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 40
+                border.width: 0
+                color: "#ffffff"
+            }
         }
         Rectangle {
             id: wordCounterContainer
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: headerContainer.horizontalCenter
+            anchors.verticalCenter: headerContainer.verticalCenter
             Text {
-                id: wordFoundLabel
-                text: gameBackend.getIndex()
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
+                id: wordSeparatorLabel
+                text: "/"
+                anchors.horizontalCenter: parent.horizontalCenter;
+                anchors.verticalCenter: parent.verticalCenter;
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
             Text {
-                id: wordSeparatorLabel
-                text: "/"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: wordFoundLabel.right
+                id: wordFoundLabel
+                text: gameBackend.getFound()
+                anchors.verticalCenter: parent.verticalCenter;
+                anchors.right: wordSeparatorLabel.left
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -80,8 +92,7 @@ Item {
             Text {
                 id: wordTotalLabel
                 text: gameBackend.getTotal()
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                anchors.verticalCenter: parent.verticalCenter;
                 anchors.left: wordSeparatorLabel.right
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
@@ -95,22 +106,23 @@ Item {
             anchors.right: parent.right
 
             Text {
-                id: scoreLabel
-                text: "Score: "
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                font.pixelSize: 24
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-            Text {
                 id: scoreValue
                 text: "0"
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
+                anchors.rightMargin: 10
                 font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text {
+                id: scoreLabel
+                text: "Score: "
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: scoreValue.left
+                font.pixelSize: 12
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -128,19 +140,47 @@ Item {
 
         Button {
             id: wildCardButtonPrevious
-            text: qsTr("<")
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             onClicked: gameBackend.previousWord()
+
+            contentItem: Text {
+                text: qsTr("<")
+                color: "#aaaaaa"
+                font.pixelSize: 36
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 40
+                border.width: 0
+                color: "#ffffff"
+            }
         }
         Button {
             id: wildCardButtonNext
-            text: qsTr(">")
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             onClicked: gameBackend.nextWord()
+
+            contentItem: Text {
+                text: qsTr(">")
+                color: "#aaaaaa"
+                font.pixelSize: 36
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 40
+                border.width: 0
+                color: "#ffffff"
+            }
         }
         Rectangle {
             id: wildCardContainer
@@ -160,12 +200,12 @@ Item {
                 model: gameBackend.getWord()
 
                 delegate: Item {
-                    width: 20
+                    width: 30
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         text: empty == "0" ? letter : "_"
-                        font.pixelSize: 24
+                        font.pixelSize: 36
                         font.bold: empty == "1"
                     }
                 }
@@ -185,24 +225,25 @@ Item {
 
         GridView {
             id: grid
+            cellWidth: 60
+            cellHeight: 60
             width: 60 * gameBackend.getGridSize()
             height: 60 * gameBackend.getGridSize()
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            cellWidth: 60; cellHeight: 60
             focus: true
             interactive: false
             model: gameBackend.getGrid()
 
             delegate: Item {
-                width: 60; height: 60
                 Text {
+                    anchors.fill: parent
                     id: gridLabel
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     text: letter
                     font.capitalization: Font.AllUppercase
-                    font.pixelSize: 24
+                    font.pixelSize: 48
                     color: bloom == "0" ? "#aaaaaa" : "#000000"
                     font.bold: selected == "1"
 
@@ -238,6 +279,7 @@ Item {
             text: qsTr("Erwan Bernard")
             anchors.fill: parent
             font.pixelSize: 12
+            color: "#aaaaaa"
             verticalAlignment: Text.AlignVCenter
             minimumPointSize: 8
             minimumPixelSize: 8

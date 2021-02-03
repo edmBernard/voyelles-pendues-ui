@@ -105,10 +105,10 @@ public:
   }
   Q_INVOKABLE void addLetter(uint64_t index) {
     if (index >= 0 && index < m_engine->getGridSize() * m_engine->getGridSize()) {
-      auto item = m_gridModel.item(index);
-      item->setData(QString("%0").arg(1), GridModel::role3);
-
-      fillWildcard(index);
+      if (fillWildcard(index)) {
+        auto item = m_gridModel.item(index);
+        item->setData(QString("%0").arg(1), GridModel::role3);
+      }
     }
   }
   Q_INVOKABLE void cleanLetter() {
@@ -158,15 +158,15 @@ public:
     emit updateWord();
   }
 
-  Q_INVOKABLE void fillWildcard(uint64_t index) {
+  Q_INVOKABLE bool fillWildcard(uint64_t index) {
     if (index >= m_engine->getGrid().size()) {
-      return;
+      return false;
     }
     if (m_pressedIndex.size() != 0) {
       // Check if index already pressed
       auto found = std::find(m_pressedIndex.begin(), m_pressedIndex.end(), index);
       if (found != m_pressedIndex.end()) {
-        return;
+        return false;
       }
     }
     m_pressedIndex.push_back(index);
@@ -175,9 +175,10 @@ public:
       if (standardItem->data(WildcardModel::role2) == "1") {
         standardItem->setData("0", WildcardModel::role2);
         standardItem->setData(QString("%0").arg(m_engine->getGrid()[index]), WildcardModel::role1);
-        return;
+        return true;
       }
     }
+    return false;
   }
 
 

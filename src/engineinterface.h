@@ -6,125 +6,27 @@
 #include <QObject>
 #include <QStandardItemModel>
 
-#include <memory>
 #include <iostream>
+#include <memory>
 
 #include "engine.h"
-
-#include <QStandardItemModel>
+#include "models.h"
 
 constexpr int kScoreOnInvalid = 0;
 constexpr int kScoreOnReset = -50;
-constexpr int kFoundWordShown = 10;
 
-class GridModel : public QStandardItemModel
-{
-
-public:
-
-  enum Role {
-    letter=Qt::UserRole,
-    bloom,
-    selected
-  };
-
-
-  explicit GridModel(QObject * parent = 0): QStandardItemModel(parent)
-  {
-  }
-  explicit GridModel( int rows, int columns, QObject * parent = 0 ): QStandardItemModel(rows, columns, parent)
-  {
-  }
-
-  QHash<int, QByteArray> roleNames() const
-  {
-    QHash<int, QByteArray> roles;
-    roles[letter] = "letter";
-    roles[bloom] = "bloom";
-    roles[selected] = "selected";
-    return roles;
-  }
-};
-
-class WildcardModel : public QStandardItemModel
-{
-
-public:
-
-  enum Role {
-    letter=Qt::UserRole,
-    empty,
-  };
-
-
-  explicit WildcardModel(QObject * parent = 0): QStandardItemModel(parent)
-  {
-  }
-  explicit WildcardModel( int rows, int columns, QObject * parent = 0 ): QStandardItemModel(rows, columns, parent)
-  {
-  }
-
-  QHash<int, QByteArray> roleNames() const
-  {
-    QHash<int, QByteArray> roles;
-    roles[letter] = "letter";
-    roles[empty] = "empty";
-    return roles;
-  }
-};
-
-class FoundWordModel : public QStandardItemModel
-{
-
-public:
-
-  enum Role {
-    word=Qt::UserRole,
-  };
-
-
-  explicit FoundWordModel(QObject * parent = 0): QStandardItemModel(parent)
-  {
-  }
-  explicit FoundWordModel(int rows, int columns, QObject * parent = 0): QStandardItemModel(rows, columns, parent)
-  {
-  }
-
-  QHash<int, QByteArray> roleNames() const
-  {
-    QHash<int, QByteArray> roles;
-    roles[word] = "word";
-    return roles;
-  }
-};
-
-class EngineInterface : public QObject
-{
+class EngineInterface : public QObject {
   Q_OBJECT
 public:
   explicit EngineInterface(int gridSize, int wordsPerPuzzle, QObject *parent = nullptr);
 
-  Q_INVOKABLE GridModel *getGrid() {
-    return &m_gridModel;
-  }
+  Q_INVOKABLE GridModel *getGrid() { return &m_gridModel; }
+  Q_INVOKABLE WildcardModel *getWord() { return &m_wildcardModel; }
+  Q_INVOKABLE FoundWordModel *getFoundWords() { return &m_foundwordModel; }
+  Q_INVOKABLE int getGridSize() { return m_gridSize; }
+  Q_INVOKABLE uint64_t getFound() { return m_foundWords.size(); }
+  Q_INVOKABLE int64_t getTotal() { return m_numberWords; }
 
-  Q_INVOKABLE WildcardModel *getWord() {
-    return &m_wildcardModel;
-  }
-  Q_INVOKABLE FoundWordModel *getFoundWords() {
-    return &m_foundwordModel;
-  }
-
-  Q_INVOKABLE int getGridSize() {
-    return m_gridSize;
-  }
-
-  Q_INVOKABLE uint64_t getFound() {
-    return m_foundWords.size();
-  }
-  Q_INVOKABLE int64_t getTotal() {
-    return m_numberWords;
-  }
   Q_INVOKABLE void previousWord() {
     incrIndex(-1);
     resetWildcardModel();
@@ -159,7 +61,6 @@ public:
     m_currentWordIndex = 0;
     m_engine->generateNewPuzzle();
     m_numberWords = m_engine->getWordsToFindLength();
-
 
     resetGridModel();
     resetWildcardModel();
@@ -211,7 +112,7 @@ public:
     const auto bloom = m_engine->getBloom();
     m_gridModel.clear();
     for (uint64_t i = 0; i < grid.size(); ++i) {
-      QStandardItem* it = new QStandardItem();
+      QStandardItem *it = new QStandardItem();
       it->setData(QString("%0").arg(grid[i]), GridModel::letter);
       it->setData(QString("%0").arg(bloom[i]), GridModel::bloom);
       it->setData(QString("%0").arg(0), GridModel::selected);
@@ -225,7 +126,7 @@ public:
     m_wildcardModel.clear();
     m_pressedIndex.clear();
     for (auto it = word.begin(); it != word.end(); ++it) {
-      QStandardItem* standardItem = new QStandardItem();
+      QStandardItem *standardItem = new QStandardItem();
       standardItem->setData(QString("%0").arg(*it), WildcardModel::letter);
       standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::empty);
       m_wildcardModel.appendRow(standardItem);
@@ -257,7 +158,6 @@ public:
     return false;
   }
 
-
 signals:
   void updateMeta();
 
@@ -277,12 +177,12 @@ private:
   void incrIndex(int value) {
     m_currentWordIndex += value;
     if (m_currentWordIndex < 0) {
-        m_currentWordIndex = m_numberWords - m_foundWords.size() - 1;
-        return;
+      m_currentWordIndex = m_numberWords - m_foundWords.size() - 1;
+      return;
     }
     if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
-        m_currentWordIndex = 0;
-        return;
+      m_currentWordIndex = 0;
+      return;
     }
   }
   void decrScoreReserve() {
@@ -294,14 +194,14 @@ private:
     m_scoreReserve = m_gridSize * m_gridSize;
   }
 
-  bool addFoundWord(const QString& word) {
+  bool addFoundWord(const QString &word) {
     const std::string wordStr = word.toUtf8().constData();
     auto result = std::find(m_foundWords.begin(), m_foundWords.end(), wordStr);
     if (result != m_foundWords.end()) {
       return false;
     }
     m_foundWords.push_back(wordStr);
-    QStandardItem* it = new QStandardItem();
+    QStandardItem *it = new QStandardItem();
     it->setData(word, FoundWordModel::word);
     m_foundwordModel.insertRow(0, it);
     return true;

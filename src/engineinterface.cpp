@@ -1,6 +1,6 @@
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <QFile>
 #include <QTextStream>
@@ -8,29 +8,26 @@
 #include "engineinterface.h"
 
 EngineInterface::EngineInterface(int gridSize, int wordsPerPuzzle, QObject *parent)
-  : QObject(parent)
-  , m_gridSize(gridSize)
-  , m_wordsPerPuzzle(wordsPerPuzzle)
-  , m_scoreReserve(gridSize * gridSize)
-{
-    QFile dictFile(":/datas/valid_words.txt");
-    if(!dictFile.open(QIODevice::ReadOnly)) {
-        throw std::runtime_error("Can't open dictionnary file");
-    }
-    QTextStream in(&dictFile);
+    : QObject(parent), m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_scoreReserve(gridSize * gridSize) {
 
-    std::vector<std::string> wordList;
+  QFile dictFile(":/datas/valid_words.txt");
+  if (!dictFile.open(QIODevice::ReadOnly)) {
+    throw std::runtime_error("Can't open dictionnary file");
+  }
+  QTextStream in(&dictFile);
 
-    while(!in.atEnd()) {
-        QString line = in.readLine();
-        wordList.push_back(line.toUtf8().constData());
-    }
+  std::vector<std::string> wordList;
 
-    dictFile.close();
+  while (!in.atEnd()) {
+    QString line = in.readLine();
+    wordList.push_back(line.toUtf8().constData());
+  }
 
-    m_engine = std::make_unique<vowels::Engine>(gridSize, wordsPerPuzzle, wordList);
-    m_numberWords = m_engine->getWordsToFindLength();
+  dictFile.close();
 
-    resetGridModel();
-    resetWildcardModel();
+  m_engine = std::make_unique<vowels::Engine>(gridSize, wordsPerPuzzle, wordList);
+  m_numberWords = m_engine->getWordsToFindLength();
+
+  resetGridModel();
+  resetWildcardModel();
 };

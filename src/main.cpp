@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   QFont monospace(family);
   app.setFont(monospace);
 
-  const int gridSize = 4;
+  const int gridSize = 5;
   EngineInterface gameBackend(gridSize, gridSize * gridSize * 2);
   appEngine.rootContext()->setContextProperty("gameBackend", &gameBackend);
 

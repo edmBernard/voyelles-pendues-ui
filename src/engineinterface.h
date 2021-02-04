@@ -25,7 +25,7 @@ public:
   Q_INVOKABLE FoundWordModel *getFoundWords() { return &m_foundwordModel; }
 
   Q_INVOKABLE int getGridSize() { return m_gridSize; }
-  Q_INVOKABLE uint64_t getFound() { return m_foundWords.size(); }
+  Q_INVOKABLE uint64_t getFound() { return m_foundWords.size() - m_numberExtraWordFound; }
   Q_INVOKABLE int64_t getTotal() { return m_numberWords; }
 
   //! Move internal index and update wildcard
@@ -66,11 +66,14 @@ private:
   void decrScoreReserve();
   void resetScoreReserve();
 
+  uint64_t remainingWord() { return m_numberWords - m_foundWords.size() + m_numberExtraWordFound; }
+
   int m_gridSize;       //!< Grid size
   int m_wordsPerPuzzle; //!< Maximum Number of word per Puzzle
 
   int64_t m_currentWordIndex = 0;       //!< Cursor of the current word in ui
   int64_t m_numberWords = 0;            //!< Total number of words to find
+  uint64_t m_numberExtraWordFound = 0;  //!< Number of extra words found
   std::vector<uint64_t> m_pressedIndex; //!< List of letter selected by player
 
   int64_t m_playerScore = 0; //!< Total player score

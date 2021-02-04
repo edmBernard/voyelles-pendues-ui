@@ -61,7 +61,7 @@ void EngineInterface::cleanLetter() {
 }
 
 void EngineInterface::generateNewPuzzle() {
-  if (m_numberWords != m_foundWords.size()) {
+  if (remainingWord() != 0) {
     incrScore(kScoreOnReset); // when the player manually reset
   }
   m_foundWords.clear();
@@ -69,6 +69,7 @@ void EngineInterface::generateNewPuzzle() {
   m_currentWordIndex = 0;
   m_engine->generateNewPuzzle();
   m_numberWords = m_engine->getWordsToFindLength();
+  m_numberExtraWordFound = 0;
 
   resetGridModel();
   resetWildcardModel();
@@ -93,10 +94,10 @@ void EngineInterface::search() {
     addFoundWord(word, true);
     incrScore(m_scoreReserve);
     resetScoreReserve();
-    if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
+    if (m_currentWordIndex >= remainingWord()) {
       incrIndex(-1);
     }
-    if (m_numberWords - m_foundWords.size() <= 0) {
+    if (remainingWord() <= 0) {
       generateNewPuzzle();
       return;
     }
@@ -177,10 +178,10 @@ void EngineInterface::incrScore(int value) {
 void EngineInterface::incrIndex(int value) {
   m_currentWordIndex += value;
   if (m_currentWordIndex < 0) {
-    m_currentWordIndex = m_numberWords - m_foundWords.size() - 1;
+    m_currentWordIndex = remainingWord() - 1;
     return;
   }
-  if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
+  if (m_currentWordIndex >= remainingWord()) {
     m_currentWordIndex = 0;
     return;
   }

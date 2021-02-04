@@ -77,7 +77,7 @@ class EngineInterface : public QObject
 {
   Q_OBJECT
 public:
-  explicit EngineInterface(uint64_t gridSize, QObject *parent = nullptr);
+  explicit EngineInterface(int gridSize, int wordsPerPuzzle, QObject *parent = nullptr);
 
   Q_INVOKABLE GridModel *getGrid() {
     return &m_gridModel;
@@ -256,7 +256,8 @@ private:
   std::vector<uint64_t> m_pressedIndex;
 
   std::unique_ptr<vowels::Engine> m_engine;
-  uint64_t m_gridSize;
+  int m_gridSize;
+  int m_wordsPerPuzzle;
   int64_t m_playerScore = 0;
   GridModel m_gridModel;
   WildcardModel m_wildcardModel;

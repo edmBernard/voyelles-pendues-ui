@@ -10,6 +10,13 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_compile_options(/std:c++latest /Oy /utf-8)
+endif()
+
+if(ANDROID)
+    add_compile_options(-Xlint:deprecation)
+endif()
 
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -19,7 +26,6 @@ include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/engine)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/engine/include)
-
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check https://doc.qt.io/qt/deployment-android.html for more information.

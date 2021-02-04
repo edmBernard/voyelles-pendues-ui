@@ -7,9 +7,10 @@
 
 #include "engineinterface.h"
 
-EngineInterface::EngineInterface(uint64_t gridSize, QObject *parent)
+EngineInterface::EngineInterface(int gridSize, int wordsPerPuzzle, QObject *parent)
   : QObject(parent)
   , m_gridSize(gridSize)
+  , m_wordsPerPuzzle(wordsPerPuzzle)
 {
     QFile dictFile(":/datas/valid_words.txt");
     if(!dictFile.open(QIODevice::ReadOnly)) {
@@ -26,7 +27,7 @@ EngineInterface::EngineInterface(uint64_t gridSize, QObject *parent)
 
     dictFile.close();
 
-    m_engine = std::make_unique<vowels::Engine>(m_gridSize, wordList);
+    m_engine = std::make_unique<vowels::Engine>(m_gridSize, m_wordsPerPuzzle, wordList);
     m_numberWords = m_engine->getWordsToFindLength();
 
     resetGridModel();

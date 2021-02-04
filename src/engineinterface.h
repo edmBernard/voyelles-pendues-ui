@@ -27,30 +27,11 @@ public:
   Q_INVOKABLE uint64_t getFound() { return m_foundWords.size(); }
   Q_INVOKABLE int64_t getTotal() { return m_numberWords; }
 
-  Q_INVOKABLE void previousWord() {
-    incrIndex(-1);
-    resetWildcardModel();
-  }
-  Q_INVOKABLE void nextWord() {
-    incrIndex(1);
-    resetWildcardModel();
-  }
-  Q_INVOKABLE void addLetter(uint64_t index) {
-    if (index >= 0 && index < m_engine->getGridSize() * m_engine->getGridSize()) {
-      if (fillWildcard(index)) {
-        auto item = m_gridModel.item(index);
-        item->setData(QString("%0").arg(1), GridModel::selected);
-      }
-    }
-  }
-  Q_INVOKABLE void cleanLetter() {
-    for (uint64_t i = 0; i < m_engine->getGridSize() * m_engine->getGridSize(); ++i) {
-      auto item = m_gridModel.item(i);
-      item->setData(QString("%0").arg(0), GridModel::selected);
-    }
-    search();
-    resetWildcardModel();
-  }
+  Q_INVOKABLE void previousWord();
+  Q_INVOKABLE void nextWord();
+
+  Q_INVOKABLE void addLetter(uint64_t index);
+  Q_INVOKABLE void cleanLetter();
 
   Q_INVOKABLE void generateNewPuzzle() {
     if (m_numberWords != m_foundWords.size()) {

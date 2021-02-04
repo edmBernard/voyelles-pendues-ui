@@ -16,6 +16,7 @@
 constexpr int kScoreOnValid = 10;
 constexpr int kScoreOnInvalid = 0;
 constexpr int kScoreOnReset = -50;
+constexpr int kFoundWordShown = 10;
 
 class GridModel : public QStandardItemModel
 {
@@ -73,6 +74,31 @@ public:
   }
 };
 
+class FoundWordModel : public QStandardItemModel
+{
+
+public:
+
+  enum Role {
+    word=Qt::UserRole,
+  };
+
+
+  explicit FoundWordModel(QObject * parent = 0): QStandardItemModel(parent)
+  {
+  }
+  explicit FoundWordModel(int rows, int columns, QObject * parent = 0): QStandardItemModel(rows, columns, parent)
+  {
+  }
+
+  QHash<int, QByteArray> roleNames() const
+  {
+    QHash<int, QByteArray> roles;
+    roles[word] = "word";
+    return roles;
+  }
+};
+
 class EngineInterface : public QObject
 {
   Q_OBJECT
@@ -86,13 +112,16 @@ public:
   Q_INVOKABLE WildcardModel *getWord() {
     return &m_wildcardModel;
   }
+  Q_INVOKABLE FoundWordModel *getFoundWords() {
+    return &m_foundwordModel;
+  }
 
   Q_INVOKABLE int getGridSize() {
     return m_gridSize;
   }
 
   Q_INVOKABLE uint64_t getFound() {
-    return m_foundWord;
+    return m_foundWords.size();
   }
   Q_INVOKABLE int64_t getTotal() {
     return m_numberWords;
@@ -123,13 +152,16 @@ public:
   }
 
   Q_INVOKABLE void generateNewPuzzle() {
-    if (m_numberWords != m_foundWord) {
+    if (m_numberWords != m_foundWords.size()) {
       incrScore(kScoreOnReset); // when the player manually reset
     }
-    m_foundWord = 0;
+    m_foundWords.clear();
+    m_foundwordModel.clear();
     m_currentWordIndex = 0;
     m_engine->generateNewPuzzle();
     m_numberWords = m_engine->getWordsToFindLength();
+
+
     resetGridModel();
     resetWildcardModel();
     emit updateMeta();
@@ -148,24 +180,24 @@ public:
     auto result = m_engine->search(word.toUtf8().constData());
     switch (result) {
     case vowels::SearchReturnCode::kWordInList:
+      addFoundWord(word);
       incrScore(kScoreOnValid);
-      ++m_foundWord;
-      if (m_currentWordIndex >= m_numberWords - m_foundWord) {
+      if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
         incrIndex(-1);
       }
-      if (m_numberWords - m_foundWord <= 0) {
+      if (m_numberWords - m_foundWords.size() <= 0) {
         generateNewPuzzle();
         return;
       }
       resetGridModel(); // to update bloom filter
       break;
     case vowels::SearchReturnCode::kWordExist:
-      incrScore(kScoreOnValid);
-      emit notify("Ce mot exist mais ce n'est pas celui qu'on cherche");
+      if (addFoundWord(word)) {
+        incrScore(kScoreOnValid);
+      }
       break;
     default:
       incrScore(kScoreOnInvalid);
-      emit notify("Ce mot n'exist pas");
     }
   }
 
@@ -195,6 +227,19 @@ public:
     }
 
     emit updateMeta();
+  }
+
+  bool addFoundWord(const QString& word) {
+    const std::string wordStr = word.toUtf8().constData();
+    auto result = std::find(m_foundWords.begin(), m_foundWords.end(), wordStr);
+    if (result != m_foundWords.end()) {
+      return false;
+    }
+    m_foundWords.push_back(wordStr);
+    QStandardItem* it = new QStandardItem();
+    it->setData(word, FoundWordModel::word);
+    m_foundwordModel.insertRow(0, it);
+    return true;
   }
 
   Q_INVOKABLE bool fillWildcard(uint64_t index) {
@@ -242,25 +287,27 @@ private:
   void incrIndex(int value) {
     m_currentWordIndex += value;
     if (m_currentWordIndex < 0) {
-        m_currentWordIndex = m_numberWords - m_foundWord - 1;
+        m_currentWordIndex = m_numberWords - m_foundWords.size() - 1;
         return;
     }
-    if (m_currentWordIndex >= m_numberWords - m_foundWord) {
+    if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
         m_currentWordIndex = 0;
         return;
     }
   }
+  int m_gridSize;
+  int m_wordsPerPuzzle;
+
   int64_t m_currentWordIndex = 0;
-  int64_t m_foundWord = 0;
+  std::vector<std::string> m_foundWords;
   int64_t m_numberWords = 0;
   std::vector<uint64_t> m_pressedIndex;
 
   std::unique_ptr<vowels::Engine> m_engine;
-  int m_gridSize;
-  int m_wordsPerPuzzle;
   int64_t m_playerScore = 0;
   GridModel m_gridModel;
   WildcardModel m_wildcardModel;
+  FoundWordModel m_foundwordModel;
 };
 
 #endif // ENGINEINTERFACE_H

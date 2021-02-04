@@ -216,6 +216,34 @@ Item {
     }
 
     Rectangle {
+        anchors.bottom: parent.bottom
+        anchors.top: wildCard.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        ListView {
+            anchors.fill: parent
+            verticalLayoutDirection: ListView.BottomToTop
+
+            model: gameBackend.getFoundWords()
+            delegate: Text {
+                text: word
+            }
+        }
+
+        Rectangle  {
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#ffffffff" }
+                GradientStop { position: 0.5; color: "#ffffffff" }
+                GradientStop { position: 1; color: "#33ffffff" }
+            }
+        }
+
+
+    }
+
+    Rectangle {
         id: gridContainer
         color: "#ffffff"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -269,20 +297,21 @@ Item {
     Rectangle {
         id: footerContainer
         height: 16
-        color: "#ffffff"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.leftMargin: 0
+        color: "#00ffffff"
 
         Text {
             id: footerLabel
             text: "Erwan Bernard"
+            anchors.rightMargin: 10
             anchors.leftMargin: 10
             anchors.fill: parent
             font.pixelSize: 12
             color: "#aaaaaa"
             verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
             minimumPointSize: 8
             minimumPixelSize: 8
         }

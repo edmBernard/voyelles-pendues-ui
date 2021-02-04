@@ -13,7 +13,6 @@
 
 #include <QStandardItemModel>
 
-constexpr int kScoreOnValid = 10;
 constexpr int kScoreOnInvalid = 0;
 constexpr int kScoreOnReset = -50;
 constexpr int kFoundWordShown = 10;
@@ -24,9 +23,9 @@ class GridModel : public QStandardItemModel
 public:
 
   enum Role {
-    role1=Qt::UserRole,
-    role2,
-    role3
+    letter=Qt::UserRole,
+    bloom,
+    selected
   };
 
 
@@ -40,9 +39,9 @@ public:
   QHash<int, QByteArray> roleNames() const
   {
     QHash<int, QByteArray> roles;
-    roles[role1] = "letter";
-    roles[role2] = "bloom";
-    roles[role3] = "selected";
+    roles[letter] = "letter";
+    roles[bloom] = "bloom";
+    roles[selected] = "selected";
     return roles;
   }
 };
@@ -53,8 +52,8 @@ class WildcardModel : public QStandardItemModel
 public:
 
   enum Role {
-    role1=Qt::UserRole,
-    role2,
+    letter=Qt::UserRole,
+    empty,
   };
 
 
@@ -68,8 +67,8 @@ public:
   QHash<int, QByteArray> roleNames() const
   {
     QHash<int, QByteArray> roles;
-    roles[role1] = "letter";
-    roles[role2] = "empty";
+    roles[letter] = "letter";
+    roles[empty] = "empty";
     return roles;
   }
 };
@@ -138,14 +137,14 @@ public:
     if (index >= 0 && index < m_engine->getGridSize() * m_engine->getGridSize()) {
       if (fillWildcard(index)) {
         auto item = m_gridModel.item(index);
-        item->setData(QString("%0").arg(1), GridModel::role3);
+        item->setData(QString("%0").arg(1), GridModel::selected);
       }
     }
   }
   Q_INVOKABLE void cleanLetter() {
     for (uint64_t i = 0; i < m_engine->getGridSize() * m_engine->getGridSize(); ++i) {
       auto item = m_gridModel.item(i);
-      item->setData(QString("%0").arg(0), GridModel::role3);
+      item->setData(QString("%0").arg(0), GridModel::selected);
     }
     search();
     resetWildcardModel();
@@ -173,7 +172,7 @@ public:
     QString word;
     for (int i = 0; i < m_wildcardModel.rowCount(); ++i) {
       auto standardItem = m_wildcardModel.item(i);
-      word.append(standardItem->data(WildcardModel::role1).toString());
+      word.append(standardItem->data(WildcardModel::letter).toString());
     }
 
     // search word in engine list
@@ -197,7 +196,7 @@ public:
 
     case vowels::SearchReturnCode::kWordExist:
       if (addFoundWord(word)) {
-        incrScore(kScoreOnValid);
+        incrScore(m_gridSize * m_gridSize);
       }
       break;
 
@@ -213,9 +212,9 @@ public:
     m_gridModel.clear();
     for (uint64_t i = 0; i < grid.size(); ++i) {
       QStandardItem* it = new QStandardItem();
-      it->setData(QString("%0").arg(grid[i]), GridModel::role1);
-      it->setData(QString("%0").arg(bloom[i]), GridModel::role2);
-      it->setData(QString("%0").arg(0), GridModel::role3);
+      it->setData(QString("%0").arg(grid[i]), GridModel::letter);
+      it->setData(QString("%0").arg(bloom[i]), GridModel::bloom);
+      it->setData(QString("%0").arg(0), GridModel::selected);
       m_gridModel.appendRow(it);
     }
   }
@@ -227,8 +226,8 @@ public:
     m_pressedIndex.clear();
     for (auto it = word.begin(); it != word.end(); ++it) {
       QStandardItem* standardItem = new QStandardItem();
-      standardItem->setData(QString("%0").arg(*it), WildcardModel::role1);
-      standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::role2);
+      standardItem->setData(QString("%0").arg(*it), WildcardModel::letter);
+      standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::empty);
       m_wildcardModel.appendRow(standardItem);
     }
 
@@ -249,9 +248,9 @@ public:
     m_pressedIndex.push_back(index);
     for (int i = 0; i < m_wildcardModel.rowCount(); ++i) {
       auto standardItem = m_wildcardModel.item(i);
-      if (standardItem->data(WildcardModel::role2) == "1") {
-        standardItem->setData("0", WildcardModel::role2);
-        standardItem->setData(QString("%0").arg(m_engine->getGrid()[index]), WildcardModel::role1);
+      if (standardItem->data(WildcardModel::empty) == "1") {
+        standardItem->setData("0", WildcardModel::empty);
+        standardItem->setData(QString("%0").arg(m_engine->getGrid()[index]), WildcardModel::letter);
         return true;
       }
     }
@@ -292,7 +291,7 @@ private:
     }
   }
   void resetScoreReserve() {
-    m_scoreReserve = kScoreOnValid;
+    m_scoreReserve = m_gridSize * m_gridSize;
   }
 
   bool addFoundWord(const QString& word) {
@@ -318,7 +317,7 @@ private:
 
   std::unique_ptr<vowels::Engine> m_engine;
   int64_t m_playerScore = 0;
-  uint8_t m_scoreReserve = 10;
+  uint8_t m_scoreReserve;
   GridModel m_gridModel;
   WildcardModel m_wildcardModel;
   FoundWordModel m_foundwordModel;

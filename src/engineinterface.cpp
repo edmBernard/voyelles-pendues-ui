@@ -11,6 +11,7 @@ EngineInterface::EngineInterface(int gridSize, int wordsPerPuzzle, QObject *pare
   : QObject(parent)
   , m_gridSize(gridSize)
   , m_wordsPerPuzzle(wordsPerPuzzle)
+  , m_scoreReserve(gridSize * gridSize)
 {
     QFile dictFile(":/datas/valid_words.txt");
     if(!dictFile.open(QIODevice::ReadOnly)) {

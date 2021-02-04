@@ -178,10 +178,13 @@ public:
 
     // search word in engine list
     auto result = m_engine->search(word.toUtf8().constData());
+
     switch (result) {
+
     case vowels::SearchReturnCode::kWordInList:
       addFoundWord(word);
-      incrScore(kScoreOnValid);
+      incrScore(m_scoreReserve);
+      resetScoreReserve();
       if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
         incrIndex(-1);
       }
@@ -191,12 +194,15 @@ public:
       }
       resetGridModel(); // to update bloom filter
       break;
+
     case vowels::SearchReturnCode::kWordExist:
       if (addFoundWord(word)) {
         incrScore(kScoreOnValid);
       }
       break;
+
     default:
+      decrScoreReserve();
       incrScore(kScoreOnInvalid);
     }
   }
@@ -227,19 +233,6 @@ public:
     }
 
     emit updateMeta();
-  }
-
-  bool addFoundWord(const QString& word) {
-    const std::string wordStr = word.toUtf8().constData();
-    auto result = std::find(m_foundWords.begin(), m_foundWords.end(), wordStr);
-    if (result != m_foundWords.end()) {
-      return false;
-    }
-    m_foundWords.push_back(wordStr);
-    QStandardItem* it = new QStandardItem();
-    it->setData(word, FoundWordModel::word);
-    m_foundwordModel.insertRow(0, it);
-    return true;
   }
 
   Q_INVOKABLE bool fillWildcard(uint64_t index) {
@@ -273,8 +266,6 @@ signals:
 
   void notify(QString message);
 
-public slots:
-
 private:
   void incrScore(int value) {
     m_playerScore += value;
@@ -295,6 +286,28 @@ private:
         return;
     }
   }
+  void decrScoreReserve() {
+    if (m_scoreReserve > 0) {
+      --m_scoreReserve;
+    }
+  }
+  void resetScoreReserve() {
+    m_scoreReserve = kScoreOnValid;
+  }
+
+  bool addFoundWord(const QString& word) {
+    const std::string wordStr = word.toUtf8().constData();
+    auto result = std::find(m_foundWords.begin(), m_foundWords.end(), wordStr);
+    if (result != m_foundWords.end()) {
+      return false;
+    }
+    m_foundWords.push_back(wordStr);
+    QStandardItem* it = new QStandardItem();
+    it->setData(word, FoundWordModel::word);
+    m_foundwordModel.insertRow(0, it);
+    return true;
+  }
+
   int m_gridSize;
   int m_wordsPerPuzzle;
 
@@ -305,6 +318,7 @@ private:
 
   std::unique_ptr<vowels::Engine> m_engine;
   int64_t m_playerScore = 0;
+  uint8_t m_scoreReserve = 10;
   GridModel m_gridModel;
   WildcardModel m_wildcardModel;
   FoundWordModel m_foundwordModel;

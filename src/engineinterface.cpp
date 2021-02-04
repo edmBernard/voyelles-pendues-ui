@@ -27,7 +27,7 @@ EngineInterface::EngineInterface(int gridSize, int wordsPerPuzzle, QObject *pare
 
     dictFile.close();
 
-    m_engine = std::make_unique<vowels::Engine>(m_gridSize, m_wordsPerPuzzle, wordList);
+    m_engine = std::make_unique<vowels::Engine>(gridSize, wordsPerPuzzle, wordList);
     m_numberWords = m_engine->getWordsToFindLength();
 
     resetGridModel();

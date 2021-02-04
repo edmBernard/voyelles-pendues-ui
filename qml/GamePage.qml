@@ -220,10 +220,12 @@ Item {
         anchors.top: wildCard.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.leftMargin: 10
 
         ListView {
             anchors.fill: parent
             verticalLayoutDirection: ListView.BottomToTop
+            interactive: false
 
             model: gameBackend.getFoundWords()
             delegate: Text {

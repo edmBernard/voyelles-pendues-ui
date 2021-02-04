@@ -230,6 +230,7 @@ Item {
             model: gameBackend.getFoundWords()
             delegate: Text {
                 text: word
+                color: wasInList == "1" ? "#000" : "#aaa"
             }
         }
 

@@ -60,7 +60,7 @@ private:
 
   void incrIndex(int value);
 
-  bool addFoundWord(const QString &word);
+  bool addFoundWord(const QString &word, bool wasInList);
 
   void incrScore(int value);
   void decrScoreReserve();

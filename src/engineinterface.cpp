@@ -90,7 +90,7 @@ void EngineInterface::search() {
   switch (result) {
 
   case vowels::SearchReturnCode::kWordInList:
-    addFoundWord(word);
+    addFoundWord(word, true);
     incrScore(m_scoreReserve);
     resetScoreReserve();
     if (m_currentWordIndex >= m_numberWords - m_foundWords.size()) {
@@ -104,7 +104,7 @@ void EngineInterface::search() {
     break;
 
   case vowels::SearchReturnCode::kWordExist:
-    if (addFoundWord(word)) {
+    if (addFoundWord(word, false)) {
       incrScore(m_gridSize * m_gridSize);
     }
     break;
@@ -194,7 +194,7 @@ void EngineInterface::resetScoreReserve() {
   m_scoreReserve = m_gridSize * m_gridSize;
 }
 
-bool EngineInterface::addFoundWord(const QString &word) {
+bool EngineInterface::addFoundWord(const QString &word, bool wasInList) {
   const std::string wordStr = word.toUtf8().constData();
   auto result = std::find(m_foundWords.begin(), m_foundWords.end(), wordStr);
   if (result != m_foundWords.end()) {
@@ -203,6 +203,7 @@ bool EngineInterface::addFoundWord(const QString &word) {
   m_foundWords.push_back(wordStr);
   QStandardItem *it = new QStandardItem();
   it->setData(word, FoundWordModel::word);
+  it->setData(wasInList, FoundWordModel::wasInList);
   m_foundwordModel.insertRow(0, it);
   return true;
 }

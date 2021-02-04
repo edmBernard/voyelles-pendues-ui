@@ -65,6 +65,7 @@ public:
 
   enum Role {
     word=Qt::UserRole,
+    wasInList
   };
 
 
@@ -79,6 +80,7 @@ public:
   {
     QHash<int, QByteArray> roles;
     roles[word] = "word";
+    roles[wasInList] = "wasInList";
     return roles;
   }
 };

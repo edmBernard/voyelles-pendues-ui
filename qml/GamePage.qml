@@ -218,8 +218,7 @@ Item {
     Rectangle {
         id: gridContainer
         color: "#ffffff"
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wildCard.bottom
         anchors.bottom: footerContainer.top
 
@@ -236,11 +235,13 @@ Item {
             model: gameBackend.getGrid()
 
             delegate: Item {
+                width: 60
+                height: 60
                 Text {
                     anchors.fill: parent
                     id: gridLabel
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                     text: letter
                     font.capitalization: Font.AllUppercase
                     font.pixelSize: 48

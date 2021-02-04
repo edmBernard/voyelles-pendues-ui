@@ -146,7 +146,7 @@ Item {
             onClicked: gameBackend.previousWord()
 
             contentItem: Text {
-                text: qsTr("<")
+                text: "<"
                 color: "#aaaaaa"
                 font.pixelSize: 36
                 horizontalAlignment: Text.AlignHCenter
@@ -168,7 +168,7 @@ Item {
             onClicked: gameBackend.nextWord()
 
             contentItem: Text {
-                text: qsTr(">")
+                text: ">"
                 color: "#aaaaaa"
                 font.pixelSize: 36
                 horizontalAlignment: Text.AlignHCenter
@@ -276,7 +276,8 @@ Item {
 
         Text {
             id: footerLabel
-            text: qsTr("Erwan Bernard")
+            text: "Erwan Bernard"
+            anchors.leftMargin: 10
             anchors.fill: parent
             font.pixelSize: 12
             color: "#aaaaaa"

@@ -154,7 +154,7 @@ Item {
             }
 
             background: Rectangle {
-                implicitWidth: 100
+                implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
                 color: "#ffffff"
@@ -176,7 +176,7 @@ Item {
             }
 
             background: Rectangle {
-                implicitWidth: 100
+                implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
                 color: "#ffffff"

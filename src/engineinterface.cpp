@@ -120,6 +120,7 @@ void EngineInterface::search() {
     if (m_currentWordIndex >= remainingWord()) {
       incrIndex(-1);
     }
+    emit notify("Mot valide trouvé", "#e4ffe4");
     if (remainingWord() <= 0) {
       generateNewPuzzle();
       return;
@@ -131,9 +132,11 @@ void EngineInterface::search() {
     if (addFoundWord(word, false)) {
       incrScore(m_maxGainPerWord);
     }
+    emit notify("Presque", "#e3f9ff");
     break;
 
   default:
+    emit notify("Essayes encore", "#ffaaaa");
     decrScoreReserve();
   }
 }

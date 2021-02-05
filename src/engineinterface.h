@@ -41,7 +41,7 @@ signals:
 
   void updateScore(uint64_t score);
 
-  void notify(QString message);
+  void notify(QString message, QString color);
 
 private:
   //! reset grid model with data from engine

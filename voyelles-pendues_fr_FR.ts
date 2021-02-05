@@ -4,17 +4,17 @@
 <context>
     <name>GamePage</name>
     <message>
-        <location filename="qml/GamePage.qml" line="29"/>
+        <location filename="qml/GamePage.qml" line="34"/>
         <source>Voyelles Pendues</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/GamePage.qml" line="54"/>
+        <location filename="qml/GamePage.qml" line="59"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/GamePage.qml" line="77"/>
+        <location filename="qml/GamePage.qml" line="82"/>
         <source>Hint</source>
         <translation type="unfinished"></translation>
     </message>

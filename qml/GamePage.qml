@@ -12,6 +12,11 @@ Item {
             wordFoundLabel.text = gameBackend.getFound();
             wordTotalLabel.text = gameBackend.getTotal();
         }
+        function onNotify(message, color) {
+            notificationLabel.text = message;
+            notificationContainer.color = color;
+            notificationAnimation.start();
+        }
     }
 
     Rectangle {
@@ -353,4 +358,33 @@ Item {
             minimumPixelSize: 8
         }
     }
+
+    Rectangle {
+        id: notificationContainer
+        height: 30
+        anchors.top: wildCard.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: "#ffffff"
+        opacity: 0.0
+
+        Text {
+            anchors.fill: parent
+            id: notificationLabel
+            text: ""
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.pixelSize: 24
+            wrapMode: Text.WordWrap
+        }
+
+    }
+
+    SequentialAnimation {
+        id: notificationAnimation
+        running: false
+        NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing: Easing.InQuart}
+        NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing: Easing.InQuart }
+    }
+
 }

@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 
 Item {
     id: root
-    property string notificationColor: root.defaultColor
+    property string notificationColor: "#ffffff"
     property string defaultColor: "#00ffffff"
     property string primaryColor: "#000000"
     property string secondaryColor: "#aaaaaa"
@@ -182,7 +182,11 @@ Item {
         anchors.top: headerContainer.bottom
         anchors.leftMargin: 0
 
-
+        Rectangle {
+            id: wildCardBackground
+            anchors.fill: parent
+            color: notificationColor
+        }
         Button {
             id: wildCardButtonPrevious
             anchors.top: parent.top
@@ -390,14 +394,7 @@ Item {
     SequentialAnimation {
         id: allAnimation
         running: false
-
-        ParallelAnimation {
-            ColorAnimation { target: wildCard; property: "color"; from: root.defaultColor; to: root.notificationColor; duration: 10; easing.type: Easing.InCubic }
-            NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InCubic }
-        }
-        ParallelAnimation {
-            NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing.type: Easing.InCubic }
-            ColorAnimation { target: wildCard; property: "color"; from: root.notificationColor; to: root.defaultColor; duration: 400; easing.type: Easing.InCubic }
-        }
+        NumberAnimation { targets: [notificationContainer, wildCardBackground]; property: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InCubic }
+        NumberAnimation { targets: [notificationContainer, wildCardBackground]; property: "opacity"; to: 0.0; duration: 400; easing.type: Easing.InCubic }
     }
 }

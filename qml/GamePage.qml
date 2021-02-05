@@ -2,6 +2,12 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 Item {
+    id: root
+    property string notificationColor: root.defaultColor
+    property string defaultColor: "#00ffffff"
+    property string primaryColor: "#000000"
+    property string secondaryColor: "#aaaaaa"
+    property string hintColor: "#5555aa"
 
     Connections {
         target: gameBackend
@@ -14,15 +20,16 @@ Item {
         }
         function onNotify(message, color) {
             notificationLabel.text = message;
-            notificationContainer.color = color;
-            notificationAnimation.start();
+            root.notificationColor = color;
+            bannerAnimation.start();
+            wildCardAnimation.start();
         }
     }
 
     Rectangle {
         id: titleContainer
         height: parent.height / 8
-        color: "#ffffff"
+        color: root.defaultColor
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -46,7 +53,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: titleContainer.bottom
-        color: "#ffffff"
+        color: root.defaultColor
 
         Button {
             id: newPuzzleButton
@@ -57,7 +64,7 @@ Item {
 
             contentItem: Text {
                 text: qsTr("New")
-                color: "#aaaaaa"
+                color: root.secondaryColor
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -67,7 +74,7 @@ Item {
                 implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
-                color: "#ffffff"
+                color: root.defaultColor
             }
         }
         Button {
@@ -80,7 +87,7 @@ Item {
 
             contentItem: Text {
                 text: qsTr("Hint")
-                color: "#aaaaaa"
+                color: root.secondaryColor
                 font.pixelSize: 24
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -90,7 +97,7 @@ Item {
                 implicitWidth: 80
                 implicitHeight: 40
                 border.width: 0
-                color: "#ffffff"
+                color: root.defaultColor
             }
         }
     }
@@ -98,7 +105,7 @@ Item {
     Rectangle {
         id: headerContainer
         height: parent.height / 16
-        color: "#ffffff"
+        color: root.defaultColor
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: buttonBar.bottom
@@ -171,11 +178,18 @@ Item {
     Rectangle {
         id: wildCard
         height: parent.height / 8
-        color: "#ffffff"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: headerContainer.bottom
         anchors.leftMargin: 0
+
+        SequentialAnimation on color {
+            id: wildCardAnimation
+            running: false
+            ColorAnimation { from: root.defaultColor; to: root.notificationColor; duration: 10; easing.type: Easing.InCubic }
+            ColorAnimation { from: root.notificationColor; to: root.defaultColor; duration: 400; easing.type: Easing.InCubic }
+        }
+
 
         Button {
             id: wildCardButtonPrevious
@@ -186,7 +200,7 @@ Item {
 
             contentItem: Text {
                 text: "<"
-                color: "#aaaaaa"
+                color: root.secondaryColor
                 font.pixelSize: 36
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -196,7 +210,7 @@ Item {
                 implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
-                color: "#ffffff"
+                color: root.defaultColor
             }
         }
         Button {
@@ -208,7 +222,7 @@ Item {
 
             contentItem: Text {
                 text: ">"
-                color: "#aaaaaa"
+                color: root.secondaryColor
                 font.pixelSize: 36
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -218,7 +232,7 @@ Item {
                 implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
-                color: "#ffffff"
+                color: root.defaultColor
             }
         }
         Rectangle {
@@ -227,6 +241,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left: wildCardButtonPrevious.right
             anchors.right: wildCardButtonNext.left
+            color: root.defaultColor
 
             ListView {
                 id: wildCardView
@@ -239,18 +254,18 @@ Item {
                 model: gameBackend.getWord()
 
                 delegate: Item {
+                    id: wildCardLetter
                     width: 30
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                         text: empty == "0" || hint == "1" ? letter : "_"
                         font.pixelSize: 36
-                        color: hint == "1" ? "#5555aa" : "#000000"
+                        color: hint == "1" ? root.hintColor : root.primaryColor
                     }
                 }
             }
         }
-
 
     }
 
@@ -269,7 +284,7 @@ Item {
             model: gameBackend.getFoundWords()
             delegate: Text {
                 text: word
-                color: wasInList == "1" ? "#000" : "#aaa"
+                color: wasInList == "1" ? root.primaryColor : root.secondaryColor
             }
         }
 
@@ -287,7 +302,7 @@ Item {
 
     Rectangle {
         id: gridContainer
-        color: "#ffffff"
+        color: root.defaultColor
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wildCard.bottom
         anchors.bottom: footerContainer.top
@@ -315,7 +330,7 @@ Item {
                     text: letter
                     font.capitalization: Font.AllUppercase
                     font.pixelSize: 48
-                    color: bloom == "0" ? "#aaaaaa" : "#000000"
+                    color: bloom == "0" ? root.secondaryColor : root.primaryColor
                     font.bold: selected == "1"
 
 
@@ -342,7 +357,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        color: "#00ffffff"
+        color: root.defaultColor
 
         Text {
             id: footerLabel
@@ -351,7 +366,7 @@ Item {
             anchors.leftMargin: 10
             anchors.fill: parent
             font.pixelSize: 12
-            color: "#aaaaaa"
+            color: root.secondaryColor
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
             minimumPointSize: 8
@@ -365,7 +380,7 @@ Item {
         anchors.top: wildCard.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        color: "#ffffff"
+        color: root.notificationColor
         opacity: 0.0
 
         Text {
@@ -381,10 +396,10 @@ Item {
     }
 
     SequentialAnimation {
-        id: notificationAnimation
+        id: bannerAnimation
         running: false
-        NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing: Easing.InQuart}
-        NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing: Easing.InQuart }
+        NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InCubic }
+        NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing.type: Easing.InCubic }
     }
 
 }

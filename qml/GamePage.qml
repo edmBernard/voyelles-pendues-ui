@@ -36,14 +36,12 @@ Item {
     }
 
     Rectangle {
-        id: headerContainer
-        height: parent.height / 16
-        color: "#ffffff"
+        id: buttonBar
+        height: 40
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: titleContainer.bottom
-        anchors.topMargin: 0
-        anchors.leftMargin: 0
+        color: "#ffffff"
 
         Button {
             id: newPuzzleButton
@@ -61,12 +59,48 @@ Item {
             }
 
             background: Rectangle {
-                implicitWidth: 100
+                implicitWidth: 60
                 implicitHeight: 40
                 border.width: 0
                 color: "#ffffff"
             }
         }
+        Button {
+            id: hintButton
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left: newPuzzleButton.right
+            anchors.leftMargin: 10
+            onPressed: gameBackend.getHint()
+
+            contentItem: Text {
+                text: qsTr("Hint")
+                color: "#aaaaaa"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 80
+                implicitHeight: 40
+                border.width: 0
+                color: "#ffffff"
+            }
+        }
+    }
+
+    Rectangle {
+        id: headerContainer
+        height: parent.height / 16
+        color: "#ffffff"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: buttonBar.bottom
+        anchors.topMargin: 0
+        anchors.leftMargin: 0
+
+
         Rectangle {
             id: wordCounterContainer
             anchors.horizontalCenter: headerContainer.horizontalCenter
@@ -204,9 +238,9 @@ Item {
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        text: empty == "0" ? letter : "_"
+                        text: empty == "0" || hint == "1" ? letter : "_"
                         font.pixelSize: 36
-                        font.bold: empty == "1"
+                        color: hint == "1" ? "#5555aa" : "#000000"
                     }
                 }
             }

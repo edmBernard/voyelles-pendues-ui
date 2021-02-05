@@ -8,7 +8,7 @@
 #include "engineinterface.h"
 
 EngineInterface::EngineInterface(int gridSize, int wordsPerPuzzle, QObject *parent)
-    : QObject(parent), m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_scoreReserve(gridSize * gridSize) {
+  : QObject(parent), m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_maxGainPerWord(gridSize * gridSize), m_scoreReserve(m_maxGainPerWord) {
 
   QFile dictFile(":/datas/valid_words.txt");
   if (!dictFile.open(QIODevice::ReadOnly)) {
@@ -62,7 +62,7 @@ void EngineInterface::cleanLetter() {
 
 void EngineInterface::generateNewPuzzle() {
   if (remainingWord() != 0) {
-    incrScore(kScoreOnReset); // when the player manually reset
+    incrScore(- m_maxGainPerWord * 10); // when the player manually reset
   }
   m_foundWords.clear();
   m_foundwordModel.clear();
@@ -74,6 +74,25 @@ void EngineInterface::generateNewPuzzle() {
   resetGridModel();
   resetWildcardModel();
   emit updateMeta();
+}
+
+void EngineInterface::getHint() {
+  if (m_playerScore < m_maxGainPerWord * 2) {
+    return;
+  }
+  incrScore(- m_maxGainPerWord * 2); // Hint penalty
+  const QString word = m_engine->getWord(m_currentWordIndex).word.data();
+  auto it_word = word.begin();
+  for (auto i = 0; i < m_wildcardModel.rowCount(); ++i, ++it_word) {
+    QStandardItem *standardItem = m_wildcardModel.item(i);
+    const QString isEmpty = standardItem->data(WildcardModel::empty).toString();
+    const QString isHint = standardItem->data(WildcardModel::hint).toString();
+    if (isEmpty == "1" && isHint == "0") {
+      standardItem->setData(QString("1"), WildcardModel::hint);
+      standardItem->setData(QString("%0").arg(*it_word), WildcardModel::letter);
+      return;
+    }
+  }
 }
 
 void EngineInterface::search() {
@@ -106,13 +125,12 @@ void EngineInterface::search() {
 
   case vowels::SearchReturnCode::kWordExist:
     if (addFoundWord(word, false)) {
-      incrScore(m_gridSize * m_gridSize);
+      incrScore(m_maxGainPerWord);
     }
     break;
 
   default:
     decrScoreReserve();
-    incrScore(kScoreOnInvalid);
   }
 }
 
@@ -138,6 +156,7 @@ void EngineInterface::resetWildcardModel() {
     QStandardItem *standardItem = new QStandardItem();
     standardItem->setData(QString("%0").arg(*it), WildcardModel::letter);
     standardItem->setData(QString("%0").arg(*it == '*'), WildcardModel::empty);
+    standardItem->setData(QString("0"), WildcardModel::hint);
     m_wildcardModel.appendRow(standardItem);
   }
 
@@ -192,7 +211,7 @@ void EngineInterface::decrScoreReserve() {
   }
 }
 void EngineInterface::resetScoreReserve() {
-  m_scoreReserve = m_gridSize * m_gridSize;
+  m_scoreReserve = m_maxGainPerWord;
 }
 
 bool EngineInterface::addFoundWord(const QString &word, bool wasInList) {

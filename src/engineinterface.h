@@ -12,9 +12,6 @@
 #include "engine.h"
 #include "models.h"
 
-constexpr int kScoreOnInvalid = 0;
-constexpr int kScoreOnReset = -50;
-
 class EngineInterface : public QObject {
   Q_OBJECT
 public:
@@ -37,6 +34,7 @@ public:
   Q_INVOKABLE void cleanLetter();
 
   Q_INVOKABLE void generateNewPuzzle();
+  Q_INVOKABLE void getHint();
 
 signals:
   void updateMeta();
@@ -77,7 +75,9 @@ private:
   std::vector<uint64_t> m_pressedIndex; //!< List of letter selected by player
 
   int64_t m_playerScore = 0; //!< Total player score
+  uint8_t m_maxGainPerWord;  //!< Maximum gain per word. Reset of the reserve
   uint8_t m_scoreReserve;    //!< Score reserve to add on next match
+
 
   std::unique_ptr<vowels::Engine> m_engine; //!< Processing engine for all logic
 

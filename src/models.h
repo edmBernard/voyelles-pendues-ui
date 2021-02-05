@@ -39,6 +39,7 @@ public:
   enum Role {
     letter=Qt::UserRole,
     empty,
+    hint
   };
 
 
@@ -54,6 +55,7 @@ public:
     QHash<int, QByteArray> roles;
     roles[letter] = "letter";
     roles[empty] = "empty";
+    roles[hint] = "hint";
     return roles;
   }
 };

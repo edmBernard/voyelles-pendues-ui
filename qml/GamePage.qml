@@ -21,8 +21,7 @@ Item {
         function onNotify(message, color) {
             notificationLabel.text = message;
             root.notificationColor = color;
-            bannerAnimation.start();
-            wildCardAnimation.start();
+            allAnimation.start();
         }
     }
 
@@ -182,13 +181,6 @@ Item {
         anchors.right: parent.right
         anchors.top: headerContainer.bottom
         anchors.leftMargin: 0
-
-        SequentialAnimation on color {
-            id: wildCardAnimation
-            running: false
-            ColorAnimation { from: root.defaultColor; to: root.notificationColor; duration: 10; easing.type: Easing.InCubic }
-            ColorAnimation { from: root.notificationColor; to: root.defaultColor; duration: 400; easing.type: Easing.InCubic }
-        }
 
 
         Button {
@@ -396,10 +388,16 @@ Item {
     }
 
     SequentialAnimation {
-        id: bannerAnimation
+        id: allAnimation
         running: false
-        NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InCubic }
-        NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing.type: Easing.InCubic }
-    }
 
+        ParallelAnimation {
+            ColorAnimation { target: wildCard; property: "color"; from: root.defaultColor; to: root.notificationColor; duration: 10; easing.type: Easing.InCubic }
+            NumberAnimation { target: notificationContainer; property: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InCubic }
+        }
+        ParallelAnimation {
+            NumberAnimation { target: notificationContainer; property: "opacity"; to: 0.0; duration: 400; easing.type: Easing.InCubic }
+            ColorAnimation { target: wildCard; property: "color"; from: root.notificationColor; to: root.defaultColor; duration: 400; easing.type: Easing.InCubic }
+        }
+    }
 }

@@ -2,10 +2,28 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="voyelles-pendues_fr_FR">
 <context>
+    <name>GamePage</name>
+    <message>
+        <location filename="qml/GamePage.qml" line="29"/>
+        <source>Voyelles Pendues</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/GamePage.qml" line="54"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/GamePage.qml" line="77"/>
+        <source>Hint</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>main</name>
     <message>
         <location filename="qml/main.qml" line="8"/>
-        <source>Hello World</source>
+        <source>Voyelles Pendues</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

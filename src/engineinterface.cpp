@@ -101,6 +101,10 @@ void EngineInterface::search() {
   QString word;
   for (int i = 0; i < m_wildcardModel.rowCount(); ++i) {
     auto standardItem = m_wildcardModel.item(i);
+    if (standardItem->data(WildcardModel::empty) == "1") {
+      // return without doing anything if incomplete word
+      return;
+    }
     word.append(standardItem->data(WildcardModel::letter).toString());
   }
 

@@ -42,8 +42,30 @@ For Android we need to use ndk toolchain and vcpkg toolchain. The way to combine
 -DVCPKG_TARGET_TRIPLET=arm64-android
 ```
 
+## Repartission of word in my database
+
+| Number of Consonnant | Number of Word |
+|:-:|:-:|
+|0|21|
+|1|599|
+|2|5833|
+|3|24145|
+|4|54049|
+|5|76404|
+|6|75446|
+|7|54214|
+|8|28961|
+|9|11758|
+|10|3761|
+|11|1028|
+|12|247|
+|13|56|
+|14|8|
+|15|1|
+
+
 ## Disclaimer
 
 It's a toy project. Mainly used to learn Qt Quick and Android development.
 Your comments are welcome, if you spot error or improvement.
-The original idea was taken from [vowels.io](vowels.io) but I would like to have french dictionnary.
+The original idea was taken from [vowels.io](https://vowels.io) but I would like to have french dictionnary.

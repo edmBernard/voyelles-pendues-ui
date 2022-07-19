@@ -35,6 +35,8 @@ export SPDLOG_LEVEL=debug
 
 ## Android
 
+QtCreator can manage Android sdk/ndk, [link](https://doc.qt.io/qtcreator/creator-developing-android.html)
+
 For Android we need to use ndk toolchain and vcpkg toolchain. The way to combine both is to add these argument to cmake :
 ```bash
 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake

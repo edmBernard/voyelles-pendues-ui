@@ -181,6 +181,7 @@ Item {
         anchors.right: parent.right
         anchors.top: headerContainer.bottom
         anchors.leftMargin: 0
+        color: root.defaultColor
 
         Rectangle {
             id: wildCardBackground
@@ -273,7 +274,11 @@ Item {
         anchors.leftMargin: 10
 
         ListView {
-            anchors.fill: parent
+            anchors.bottom: parent.bottom
+            height: parent.height * 2 / 3
+            anchors.left: parent.left
+            anchors.right: parent.right
+
             verticalLayoutDirection: ListView.BottomToTop
             interactive: false
 

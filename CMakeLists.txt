@@ -49,6 +49,8 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/engineinterface.cpp
         src/engineinterface.h
+        src/scoreinterface.cpp
+        src/scoreinterface.h
         src/models.h
         qml.qrc
         ${TS_FILES}

@@ -112,5 +112,13 @@ Window {
                 secondaryColor: mainWindow.secondaryColor
             }
         }
+        Rectangle {
+            ScorePage {
+                width: parent.width
+                height: parent.height
+                defaultColor: mainWindow.defaultColor
+                secondaryColor: mainWindow.secondaryColor
+            }
+        }
     }
 }

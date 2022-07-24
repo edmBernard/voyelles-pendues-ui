@@ -86,3 +86,32 @@ public:
     return roles;
   }
 };
+
+class BestScoreModel : public QStandardItemModel
+{
+
+public:
+
+  enum Role {
+    score=Qt::UserRole,
+    date,
+    gridType
+  };
+
+
+  explicit BestScoreModel(QObject * parent = 0): QStandardItemModel(parent)
+  {
+  }
+  explicit BestScoreModel(int rows, int columns, QObject * parent = 0): QStandardItemModel(rows, columns, parent)
+  {
+  }
+
+  QHash<int, QByteArray> roleNames() const
+  {
+    QHash<int, QByteArray> roles;
+    roles[score] = "score";
+    roles[date] = "date";
+    roles[gridType] = "gridType";
+    return roles;
+  }
+};

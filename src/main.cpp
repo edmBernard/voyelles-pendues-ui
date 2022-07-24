@@ -4,6 +4,7 @@
 #include <QFontDatabase>
 
 #include "engineinterface.h"
+#include "scoreinterface.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +34,9 @@ int main(int argc, char *argv[])
 
   EngineInterface gameBackend5x5(5, 5 * 5);
   appEngine.rootContext()->setContextProperty("gameBackend5x5", &gameBackend5x5);
+
+  ScoresInterface scoreBackend(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+  appEngine.rootContext()->setContextProperty("scoreBackend", &scoreBackend);
 
   const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
   QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,

@@ -28,9 +28,11 @@ int main(int argc, char *argv[])
   QFont monospace(family);
   app.setFont(monospace);
 
-  const int gridSize = 5;
-  EngineInterface gameBackend(gridSize, gridSize * gridSize * 2);
-  appEngine.rootContext()->setContextProperty("gameBackend", &gameBackend);
+  EngineInterface gameBackend4x4(4, 4 * 4);
+  appEngine.rootContext()->setContextProperty("gameBackend4x4", &gameBackend4x4);
+
+  EngineInterface gameBackend5x5(5, 5 * 5);
+  appEngine.rootContext()->setContextProperty("gameBackend5x5", &gameBackend5x5);
 
   const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
   QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,

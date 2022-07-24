@@ -3,11 +3,12 @@ import QtQuick.Controls 2.12
 
 Item {
     id: root
+    property string defaultColor
+    property string secondaryColor
     property string notificationColor: "#ffffff"
-    property string defaultColor: "#00ffffff"
     property string primaryColor: "#000000"
-    property string secondaryColor: "#aaaaaa"
     property string hintColor: "#5555aa"
+    property var gameBackend
 
     Connections {
         target: gameBackend
@@ -26,32 +27,11 @@ Item {
     }
 
     Rectangle {
-        id: titleContainer
-        height: parent.height / 8
-        color: root.defaultColor
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.leftMargin: 0
-
-        Text {
-            id: titleLabel
-            text: qsTr("Voyelles Pendues")
-            anchors.fill: parent
-            font.pixelSize: 24
-            font.capitalization: "AllUppercase"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-    }
-
-    Rectangle {
         id: buttonBar
         height: 40
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: titleContainer.bottom
+        anchors.top: parent.top
         color: root.defaultColor
 
         Button {

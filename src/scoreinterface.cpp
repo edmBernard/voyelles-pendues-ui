@@ -1,33 +1,92 @@
-#include <memory>
-#include <string>
-#include <vector>
+#include "scoreinterface.h"
 
 #include <QFile>
 #include <QTextStream>
 
-#include "scoreinterface.h"
+#include <spdlog/spdlog.h>
+
+#include <memory>
+#include <string>
+#include <vector>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 ScoresInterface::ScoresInterface(const QString& saveFolder, QObject *parent)
   : QObject(parent) {
+  fs::path folder = saveFolder.toStdString();
+  if (!fs::exists(folder)) {
+    spdlog::info("Save folder don't exist creating it : {}", folder.string());
+    fs::create_directory(saveFolder.toStdString());
+  }
 
-//   QFile dictFile("saveFolder/best_scores.txt");
-//   if (!dictFile.open(QIODevice::ReadOnly)) {
-//     throw std::runtime_error("Can't open best score file");
-//   }
-//   QTextStream in(&dictFile);
+  m_saveFilename = folder / "best_scores.txt";
 
-//   while (!in.atEnd()) {
-//     QString line = in.readLine();
-// //    wordList.push_back(line.toUtf8().constData());
-//   }
+  if (!fs::exists(m_saveFilename)) {
+    spdlog::info("No previous save found : {}", m_saveFilename.string());
+    return;
+  }
 
-//   dictFile.close();
+  QFile dictFile(m_saveFilename);
+  if (!dictFile.open(QIODevice::ReadOnly)) {
+    throw std::runtime_error("Can't open best score file : " + m_saveFilename.string());
+  }
 
-  for (int i = 0; i < 10; ++i) {
+  spdlog::debug("Score filename {}", m_saveFilename.string());
+  QTextStream in(&dictFile);
+
+  while (!in.atEnd()) {
+    QString line = in.readLine();
+    QStringList splitted = line.split(',');
+    int score = splitted[0].toInt();
+    QDateTime date = QDateTime::fromString(splitted[1], Qt::RFC2822Date);
+    m_bestScores.emplace_back(score, date);
+  }
+
+  dictFile.close();
+
+  std::sort(m_bestScores.begin(), m_bestScores.end(), [](auto elem1, auto elem2){return std::get<0>(elem1) > std::get<0>(elem2); });
+
+  for (auto &[score, date] : m_bestScores) {
     QStandardItem *it = new QStandardItem();
-    it->setData(i, BestScoreModel::score);
-    it->setData(i, BestScoreModel::date);
-    it->setData(i % 2, BestScoreModel::gridType);
+    it->setData(score, BestScoreModel::score);
+    it->setData(date, BestScoreModel::date);
+    it->setData(15, BestScoreModel::gridType);
     m_bestScoreModel.insertRow(0, it);
   }
 };
+
+void ScoresInterface::resetBestScores() {
+  m_bestScores.clear();
+  m_bestScoreModel.clear();
+}
+
+void ScoresInterface::addBestScore(int score) {
+  m_bestScores.emplace_back(score, QDateTime::currentDateTime());
+
+  std::sort(m_bestScores.begin(), m_bestScores.end(), [](auto elem1, auto elem2){return std::get<0>(elem1) > std::get<0>(elem2); });
+
+  if (m_bestScores.size() > 10)
+    m_bestScores.resize(10);
+
+  m_bestScoreModel.clear();
+
+  QFile dictFile(m_saveFilename);
+  if (!dictFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    throw std::runtime_error("Can't open best score file : " + m_saveFilename.string());
+  }
+
+  QTextStream out(&dictFile);
+
+  for (auto &[score, date] : m_bestScores) {
+    spdlog::debug("Inserted date : {}", date.toString(Qt::RFC2822Date).toStdString());
+    QStandardItem *it = new QStandardItem();
+    it->setData(score, BestScoreModel::score);
+    it->setData(date.toString(Qt::RFC2822Date), BestScoreModel::date);
+    it->setData(15, BestScoreModel::gridType);
+    m_bestScoreModel.insertRow(0, it);
+    out << score << "," << date.toString(Qt::RFC2822Date) << "\n";
+  }
+
+  dictFile.close();
+}

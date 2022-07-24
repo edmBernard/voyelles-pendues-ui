@@ -1,13 +1,17 @@
 #pragma once
 
+#include "models.h"
+
 #include <QObject>
 #include <QStandardItemModel>
-#include <QStandardPaths>
+#include <QDateTime>
 
 #include <iostream>
 #include <memory>
+#include <tuple>
+#include <filesystem>
 
-#include "models.h"
+namespace fs = std::filesystem;
 
 class ScoresInterface : public QObject {
   Q_OBJECT
@@ -15,8 +19,11 @@ public:
   explicit ScoresInterface(const QString& saveFolder, QObject *parent = nullptr);
 
   Q_INVOKABLE BestScoreModel *getBestScores() { return &m_bestScoreModel; }
+  Q_INVOKABLE void resetBestScores();
+  Q_INVOKABLE void addBestScore(int score);
 
 private:
-  std::vector<int> bestScores;
+  std::vector<std::tuple<int, QDateTime>> m_bestScores;
   BestScoreModel m_bestScoreModel;
+  fs::path m_saveFilename;
 };

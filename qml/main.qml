@@ -22,7 +22,7 @@ Window {
             contentItem: Text {
                 text: qsTr("4x4")
                 color: mainWindow.secondaryColor
-                font.bold: bar.currentIndex == 0
+                font.bold: bar.currentIndex === 0
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -32,11 +32,12 @@ Window {
                 border.width: 0
                 color: mainWindow.defaultColor
             }
+
         }
         TabButton {
             contentItem: Text {
                 text: qsTr("5x5")
-                font.bold: bar.currentIndex == 1
+                font.bold: bar.currentIndex === 1
                 color: mainWindow.secondaryColor
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignHCenter
@@ -51,7 +52,7 @@ Window {
         TabButton {
             contentItem: Text {
                 text: qsTr("Best Score")
-                font.bold: bar.currentIndex == 2
+                font.bold: bar.currentIndex === 2
                 color: mainWindow.secondaryColor
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignHCenter

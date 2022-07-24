@@ -1,12 +1,15 @@
+#include "engineinterface.h"
+#include "scoreinterface.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QFontDatabase>
+#include <QStandardPaths>
 
-#include "engineinterface.h"
-#include "scoreinterface.h"
+#include <spdlog/spdlog.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) try
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -47,4 +50,8 @@ int main(int argc, char *argv[])
   appEngine.load(url);
 
   return app.exec();
+
+} catch (const std::exception &e) {
+  spdlog::error("{}", e.what());
+  return EXIT_FAILURE;
 }

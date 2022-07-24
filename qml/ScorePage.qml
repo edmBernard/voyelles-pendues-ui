@@ -10,34 +10,43 @@ Item {
     property string hintColor: "#5555aa"
 
     ListView {
-        anchors.bottom: parent.bottom
-        height: parent.height * 2 / 3
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.fill: parent
 
-        verticalLayoutDirection: ListView.TopToBottom
+        orientation: ListView.VerticalTopToBottom
         interactive: false
 
         model: scoreBackend.getBestScores()
-        delegate: Rectangle {
-          Text {
-            text: index
-          }
-          Text {
-            text: score
-          }
-          Text {
-            text: date
-          }
-        }
-    }
 
-    Rectangle  {
-        anchors.fill: parent
-        gradient: Gradient {
-            GradientStop { position: 0; color: "#ffffffff" }
-            GradientStop { position: 0.5; color: "#ffffffff" }
-            GradientStop { position: 1; color: "#33ffffff" }
+        delegate: Rectangle {
+            width: parent.width
+            height: indexContainer.height
+            anchors.left: parent.left
+
+            Text {
+                id: indexContainer
+                width: parent.width / 10
+                anchors.left: parent.left
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                text: index
+                color: score.defaultColor
+            }
+            Text {
+                id: dateContainer
+                anchors.right: parent.right
+                width: parent.width / 3
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+
+                text: date * 3000
+                color: score.defaultColor
+            }
+            Text {
+                anchors.left: indexContainer.right
+                anchors.right: dateContainer.left
+                text: score * 10
+                color: score.secondaryColor
+            }
         }
     }
 }

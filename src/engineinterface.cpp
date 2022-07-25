@@ -75,6 +75,7 @@ void EngineInterface::generateNewPuzzle() {
   resetGridModel();
   resetWildcardModel();
   emit updateMeta();
+  emit updateScore(m_playerScore);
 }
 
 void EngineInterface::getHint() {

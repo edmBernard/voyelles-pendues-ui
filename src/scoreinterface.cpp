@@ -27,7 +27,7 @@ ScoresInterface::ScoresInterface(const QString& saveFolder, const QString& name,
     return;
   }
 
-  QFile dictFile(m_saveFilename);
+  QFile dictFile(QString::fromStdString(m_saveFilename.string()));
   if (!dictFile.open(QIODevice::ReadOnly)) {
     throw std::runtime_error("Can't open best score file : " + m_saveFilename.string());
   }
@@ -47,7 +47,7 @@ ScoresInterface::ScoresInterface(const QString& saveFolder, const QString& name,
 
   std::sort(m_bestScores.begin(), m_bestScores.end(), [](auto elem1, auto elem2){return std::get<0>(elem1) > std::get<0>(elem2); });
 
-  for (auto &[score, date] : m_bestScores) {
+  for (const auto &[score, date] : m_bestScores) {
     QStandardItem *it = new QStandardItem();
     it->setData(score, BestScoreModel::score);
     it->setData(date, BestScoreModel::date);
@@ -62,7 +62,7 @@ void ScoresInterface::resetBestScores() {
   fs::remove(m_saveFilename);
 }
 
-void ScoresInterface::addBestScore(uint64_t score) {
+void ScoresInterface::addBestScore(int score) {
   m_bestScores.emplace_back(score, QDateTime::currentDateTime());
 
   std::sort(m_bestScores.begin(), m_bestScores.end(), [](auto elem1, auto elem2){return std::get<0>(elem1) > std::get<0>(elem2); });
@@ -72,7 +72,7 @@ void ScoresInterface::addBestScore(uint64_t score) {
 
   m_bestScoreModel.clear();
 
-  QFile dictFile(m_saveFilename);
+  QFile dictFile(QString::fromStdString(m_saveFilename.string()));
   if (!dictFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
     throw std::runtime_error("Can't open best score file : " + m_saveFilename.string());
   }

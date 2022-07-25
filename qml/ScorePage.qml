@@ -92,9 +92,12 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         currentIndex: bar.currentIndex
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
 
         Rectangle {
             ScoreList {
+
                 width: parent.width
                 height: parent.height
                 defaultColor: root.defaultColor

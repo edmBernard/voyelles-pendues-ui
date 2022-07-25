@@ -231,6 +231,9 @@ bool EngineInterface::addFoundWord(const QString &word, bool wasInList) {
     return false;
   }
   m_foundWords.push_back(wordStr);
+  if (!wasInList)
+    m_numberExtraWordFound++;
+
   QStandardItem *it = new QStandardItem();
   it->setData(word, FoundWordModel::word);
   it->setData(wasInList, FoundWordModel::wasInList);

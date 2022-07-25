@@ -70,6 +70,7 @@ void EngineInterface::generateNewPuzzle() {
   m_engine->generateNewPuzzle();
   m_numberWords = m_engine->getWordsToFindLength();
   m_numberExtraWordFound = 0;
+  m_playerScore = 0;
 
   resetGridModel();
   resetWildcardModel();
@@ -122,6 +123,7 @@ void EngineInterface::search() {
     }
     emit notify("Mot valide trouvé", "#e4ffe4");
     if (remainingWord() <= 0) {
+      emit updateBestScore(m_playerScore);
       generateNewPuzzle();
       return;
     }

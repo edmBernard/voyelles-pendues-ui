@@ -16,14 +16,14 @@ namespace fs = std::filesystem;
 class ScoresInterface : public QObject {
   Q_OBJECT
 public:
-  explicit ScoresInterface(const QString& saveFolder, QObject *parent = nullptr);
+  explicit ScoresInterface(const QString& saveFolder, const QString& name, QObject *parent = nullptr);
 
   Q_INVOKABLE BestScoreModel *getBestScores() { return &m_bestScoreModel; }
   Q_INVOKABLE void resetBestScores();
-  Q_INVOKABLE void addBestScore(int score);
+  Q_INVOKABLE void addBestScore(uint64_t score);
 
 private:
-  std::vector<std::tuple<int, QDateTime>> m_bestScores;
+  std::vector<std::tuple<uint64_t, QDateTime>> m_bestScores;
   BestScoreModel m_bestScoreModel;
   fs::path m_saveFilename;
 };

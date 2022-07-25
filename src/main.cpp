@@ -32,14 +32,17 @@ int main(int argc, char *argv[]) try
   QFont monospace(family);
   app.setFont(monospace);
 
-  EngineInterface gameBackend4x4(4, 4 * 4);
+  EngineInterface gameBackend4x4(4, 4*4);
   appEngine.rootContext()->setContextProperty("gameBackend4x4", &gameBackend4x4);
+  ScoresInterface scoreBackend4x4(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "best_scores4x4");
+  QObject::connect(&gameBackend4x4, &EngineInterface::updateBestScore, &scoreBackend4x4, &ScoresInterface::addBestScore);
+  appEngine.rootContext()->setContextProperty("scoreBackend4x4", &scoreBackend4x4);
 
-  EngineInterface gameBackend5x5(5, 5 * 5);
+  EngineInterface gameBackend5x5(5, 5*5);
   appEngine.rootContext()->setContextProperty("gameBackend5x5", &gameBackend5x5);
-
-  ScoresInterface scoreBackend(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-  appEngine.rootContext()->setContextProperty("scoreBackend", &scoreBackend);
+  ScoresInterface scoreBackend5x5(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "best_scores5x5");
+  QObject::connect(&gameBackend5x5, &EngineInterface::updateBestScore, &scoreBackend5x5, &ScoresInterface::addBestScore);
+  appEngine.rootContext()->setContextProperty("scoreBackend5x5", &scoreBackend5x5);
 
   const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
   QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,

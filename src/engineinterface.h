@@ -41,6 +41,8 @@ signals:
 
   void updateScore(uint64_t score);
 
+  void updateBestScore(uint64_t score);
+
   void notify(QString message, QString color);
 
 private:

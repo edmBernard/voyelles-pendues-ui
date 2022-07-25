@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-ScoresInterface::ScoresInterface(const QString& saveFolder, QObject *parent)
+ScoresInterface::ScoresInterface(const QString& saveFolder, const QString& name, QObject *parent)
   : QObject(parent) {
   fs::path folder = saveFolder.toStdString();
   if (!fs::exists(folder)) {
@@ -20,7 +20,7 @@ ScoresInterface::ScoresInterface(const QString& saveFolder, QObject *parent)
     fs::create_directory(saveFolder.toStdString());
   }
 
-  m_saveFilename = folder / "best_scores.txt";
+  m_saveFilename = folder / (name.toStdString() + ".txt");
 
   if (!fs::exists(m_saveFilename)) {
     spdlog::info("No previous save found : {}", m_saveFilename.string());
@@ -52,16 +52,17 @@ ScoresInterface::ScoresInterface(const QString& saveFolder, QObject *parent)
     it->setData(score, BestScoreModel::score);
     it->setData(date, BestScoreModel::date);
     it->setData(15, BestScoreModel::gridType);
-    m_bestScoreModel.insertRow(0, it);
+    m_bestScoreModel.appendRow(it);
   }
 };
 
 void ScoresInterface::resetBestScores() {
   m_bestScores.clear();
   m_bestScoreModel.clear();
+  fs::remove(m_saveFilename);
 }
 
-void ScoresInterface::addBestScore(int score) {
+void ScoresInterface::addBestScore(uint64_t score) {
   m_bestScores.emplace_back(score, QDateTime::currentDateTime());
 
   std::sort(m_bestScores.begin(), m_bestScores.end(), [](auto elem1, auto elem2){return std::get<0>(elem1) > std::get<0>(elem2); });
@@ -84,7 +85,7 @@ void ScoresInterface::addBestScore(int score) {
     it->setData(score, BestScoreModel::score);
     it->setData(date.toString(Qt::RFC2822Date), BestScoreModel::date);
     it->setData(15, BestScoreModel::gridType);
-    m_bestScoreModel.insertRow(0, it);
+    m_bestScoreModel.appendRow(it);
     out << score << "," << date.toString(Qt::RFC2822Date) << "\n";
   }
 
